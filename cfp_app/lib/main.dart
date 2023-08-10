@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './pages/login.dart';
 import './pages/cadastro.dart';
-import './pages/home.dart';
+//import './pages/home.dart';
 
 void main() {
   runApp(const MainApp());
@@ -16,16 +16,16 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Customer Flight Predictor',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF141414),
+        scaffoldBackgroundColor: const Color(0xFF242425),
         buttonTheme: const ButtonThemeData(
-          buttonColor: Color(0xFF50c878),
+          buttonColor: Color(0xFF0EA5B0),
         )
       ),
       initialRoute: '/',
       routes: {
-        '/login': (context) => const TelaLogin(),
+        '/': (context) => const TelaLogin(),
         '/cadastro': (context) => const TelaCadastro(),
-        '/home': (context) => const TelaHome(),
+        
       },
     );
   }
