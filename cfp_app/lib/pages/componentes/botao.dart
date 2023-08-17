@@ -14,17 +14,18 @@ class Botao extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF0EA5B0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        minimumSize: const Size(296, 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)),
+        minimumSize: const Size(150, 50),
+        maximumSize: const Size(296, 50),
       ),
       onPressed: fn,
       child: Text(
         texto,
         style: const TextStyle(
-          fontSize: 19.2,
+          fontSize: 19.5,
           fontFamily: 'Roboto',
-          color: Color.fromRGBO(248, 250, 255, 1),
+          color: Colors.white,
         ),
       ),
     );

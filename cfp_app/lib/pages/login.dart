@@ -22,7 +22,7 @@ class _TelaLoginState extends State<TelaLogin> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(
-              height: 112.0,
+              height: 90.0,
             ),
             const Text(
                 'Customer Flight Predictor',
@@ -38,18 +38,19 @@ class _TelaLoginState extends State<TelaLogin> {
             // Logo
             SizedBox(
               width: 256.0,
-              height: 190.51,
+              height: 175.0,
               child: Image.asset("assets/images/logo.png"),
             ),
             const SizedBox(
-              height: 50.49,
+              height: 20.0,
             ),
 
             // Campo de email
             CampoForm(
               controller: _email,
               obscureText: false,
-              hintText: 'Email ou nome de usuário',
+              hintText: 'Email',
+              icon: const Icon(Icons.email, color: Colors.white),
               validator: (_) => null,
             ),
 
@@ -62,6 +63,7 @@ class _TelaLoginState extends State<TelaLogin> {
               controller: _senha,
               obscureText: true,
               hintText: 'Senha',
+              icon: const Icon(Icons.lock, color: Colors.white),
               validator: (_) => null,
             ),
 

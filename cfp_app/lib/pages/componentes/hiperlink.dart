@@ -20,7 +20,7 @@ class Hiperlink extends StatelessWidget {
         Text(
           texto,
           style: const TextStyle(
-            color: Color.fromRGBO(248, 250, 255, 1),
+            color: Colors.white,
             fontSize: 16,
             fontFamily: 'Roboto',
           ),
@@ -33,7 +33,7 @@ class Hiperlink extends StatelessWidget {
           child: Text(
             entrarCadastrar,
             style: const TextStyle(
-              color: Color.fromRGBO(248, 250, 255, 1),
+              color: Colors.white,
               fontSize: 16,
               fontFamily: 'Roboto',
               decoration: TextDecoration.underline,
