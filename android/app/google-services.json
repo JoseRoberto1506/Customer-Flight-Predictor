@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "681565083194",
+    "firebase_url": "https://cfpdsiapp-default-rtdb.firebaseio.com",
+    "project_id": "cfpdsiapp",
+    "storage_bucket": "cfpdsiapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681565083194:android:9dbd889b769c222f3cc703",
+        "android_client_info": {
+          "package_name": "com.example.cfp_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681565083194-9tmbikccmpc3sedqi56ght7tpaersspj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYoVUtQNCemVu0sqmrXS2WLcm5LB9QBlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681565083194-9tmbikccmpc3sedqi56ght7tpaersspj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
