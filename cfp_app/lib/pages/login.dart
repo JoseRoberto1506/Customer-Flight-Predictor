@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import 'componentes/botao.dart';
 import './componentes/hiperlink.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({super.key});
@@ -13,6 +15,7 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   final _email = TextEditingController();
   final _senha = TextEditingController();
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context){
@@ -72,7 +75,7 @@ class _TelaLoginState extends State<TelaLogin> {
             ),
 
             // Botão de entrar
-            const Botao(
+            Botao(
                fn: logar,
               texto: 'Entrar',
             ),
@@ -92,6 +95,20 @@ class _TelaLoginState extends State<TelaLogin> {
       )
     );
   }
-}
+  logar() async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _senha.text,
+      );
 
-logar() async {}
+      // Login successful, navigate to a new screen
+      // For example:
+      print('logado');
+    } catch (error) {
+      // Handle login failure and provide user feedback
+      print("Login failed: $error");
+      // Display an error message to the user or handle it in your UI
+    }
+  }
+}
