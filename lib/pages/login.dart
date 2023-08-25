@@ -104,7 +104,7 @@ class _TelaLoginState extends State<TelaLogin> {
 
       // Login successful, navigate to a new screen
       // For example:
-      print('logado');
+      Navigator.pushReplacementNamed(context, '/cadastrarcliente');
     } catch (error) {
       // Handle login failure and provide user feedback
       print("Login failed: $error");

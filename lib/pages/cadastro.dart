@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cfp_app/pages/componentes/campoForm.dart';
 import 'package:cfp_app/pages/componentes/hiperlink.dart';
 import 'package:cfp_app/modelos/User.dart' as LocalUser;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TelaCadastro extends StatefulWidget {
   const TelaCadastro({super.key});
@@ -13,6 +14,7 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
+  final db=FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   final _username = TextEditingController();
@@ -36,8 +38,15 @@ class _TelaCadastroState extends State<TelaCadastro> {
           email: user.email,
           password: user.password,
         );
+        String uid = userCredential.user!.uid;
+        db.collection("usuarios").doc(uid).set({
+          'id':uid,
+          'username':_username.text,
+          'email': _email.text,}
+        );
         Navigator.pushReplacementNamed(context, '/');
-      } catch (error) {
+      } 
+      catch (error) {
         // Handle registration failure
         print("User registration failed: $error");
       }
