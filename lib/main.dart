@@ -4,7 +4,7 @@ import './pages/cadastro.dart';
 import './pages/cadastrar_cliente.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import './pages/home.dart';
+import './pages/menu.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +32,7 @@ class MainApp extends StatelessWidget {
         '/': (context) => const TelaLogin(),
         '/cadastro': (context) => const TelaCadastro(),
         '/cadastrarcliente': (context) => const TelaCadastrarCliente(),
+        '/menu': (context) => const TelaMenu(),
       },
     );
   }

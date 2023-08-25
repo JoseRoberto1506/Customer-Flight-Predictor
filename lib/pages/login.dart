@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import 'componentes/botao.dart';
@@ -104,7 +102,7 @@ class _TelaLoginState extends State<TelaLogin> {
 
       // Login successful, navigate to a new screen
       // For example:
-      Navigator.pushReplacementNamed(context, '/cadastrarcliente');
+      Navigator.pushReplacementNamed(context, '/menu');
     } catch (error) {
       // Handle login failure and provide user feedback
       print("Login failed: $error");
