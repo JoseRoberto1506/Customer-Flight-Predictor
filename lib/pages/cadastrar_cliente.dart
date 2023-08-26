@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:cfp_app/pages/componentes/dialogConfirm.dart';
 import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import './componentes/botao.dart';
@@ -35,7 +36,6 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
       "sexo": _sexoCliente.text,
       "probabilidade_churn": _pchurnCliente.text,
     };
-
     String? uid = user?.uid;
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('usuarios').doc(uid);
@@ -44,6 +44,21 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
 
     listaClientesRef.add(cliente).then((DocumentReference doc) =>
         print('DocumentSnapshot added with ID: ${doc.id}'));
+
+    bool? confirmado = await ConfirmationDialog.show(
+      context,
+      'Cadastro Confirmado',
+      'Deseja cadastrar um novo usuario?',
+    );
+    if (confirmado == true) {
+      _nomeCliente.clear();
+      _cpfCliente.clear();
+      _nascimentoCliente.clear();
+      _sexoCliente.clear();
+      _pchurnCliente.clear();
+    } else {
+      navegar(context, '/listaClientes');
+    }
   }
 
   @override
@@ -101,22 +116,20 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
             const SizedBox(
               height: 20,
             ),
-            CampoForm(
-              controller: _sexoCliente,
-              obscureText: false,
-              hintText: 'Sexo',
-              icon: const Icon(Icons.person, color: Colors.white),
-              validator: (_) => null,
+            Dropdown(
+              controller: _sexoCliente, // Use o controlador _pchurnCliente
+              dropOpcoes: ['Masculino', 'Feminino'],
+              hint: 'Sexo',
+              icon: Icon(Icons.directions_run_outlined, color: Colors.white),
             ),
             const SizedBox(
               height: 20,
             ),
-            DropdownButtonWidget<String>(
-              items: ['Sim', 'Não'],
-              selectedItem: 'Sim',
-              onChanged: (value) {
-                // Aqui você pode tratar a mudança de valor
-              },
+            Dropdown(
+              controller: _pchurnCliente, // Use o controlador _pchurnCliente
+              dropOpcoes: ['Grande chance de sair', 'Pouca chance de sair'],
+              hint: 'Probabilidade de Churn',
+              icon: Icon(Icons.directions_run_outlined, color: Colors.white),
             ),
             const SizedBox(
               height: 20,

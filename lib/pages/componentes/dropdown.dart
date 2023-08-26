@@ -1,34 +1,56 @@
 import 'package:flutter/material.dart';
 
-class DropdownButtonWidget<T> extends StatefulWidget {
-  final List<T> items;
-  final T selectedItem;
-  final void Function(T?)? onChanged;
-
-  DropdownButtonWidget({
-    required this.items,
-    required this.selectedItem,
-    required this.onChanged,
+class Dropdown extends StatelessWidget {
+  final TextEditingController controller;
+  final List<String> dropOpcoes;
+  final String hint;
+  final Icon icon;
+  Dropdown({
+    super.key,
+    required this.controller,
+    required this.dropOpcoes,
+    required this.hint,
+    required this.icon,
   });
 
-  @override
-  _DropdownButtonWidgetState<T> createState() => _DropdownButtonWidgetState<T>();
-}
+  final dropValue = ValueNotifier('');
 
-// ...
-
-class _DropdownButtonWidgetState<T> extends State<DropdownButtonWidget<T>> {
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<T>(
-      value: widget.selectedItem,
-      items: widget.items.map((T item) {
-        return DropdownMenuItem<T>(
-          value: item,
-          child: Text(item.toString()),
-        );
-      }).toList(),
-      onChanged: widget.onChanged,
-    );
+    return ValueListenableBuilder(
+        valueListenable: dropValue,
+        builder: (BuildContext context, String value, _) {
+          return SizedBox(
+              width: 296,
+              child: DropdownButtonFormField<String>(
+                isExpanded: true,
+                hint: Text(hint,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    )),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color(0xFF313133),
+                  prefixIcon: Align(
+                    widthFactor: 1.0,
+                    heightFactor: 1.0,
+                    child: icon,
+                  ),
+                ),
+                icon:
+                    const Icon(Icons.expand_more_outlined, color: Colors.white),
+                value: controller.text.isEmpty ? null : controller.text,
+                onChanged: (escolha) {
+                  controller.text = escolha.toString();
+                },
+                items: dropOpcoes
+                    .map((op) => DropdownMenuItem(
+                          value: op,
+                          child: Text(op),
+                        ))
+                    .toList(),
+              ));
+        });
   }
 }
