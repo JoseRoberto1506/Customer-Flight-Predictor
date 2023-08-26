@@ -14,7 +14,7 @@ class TelaCadastro extends StatefulWidget {
 }
 
 class _TelaCadastroState extends State<TelaCadastro> {
-  final db=FirebaseFirestore.instance;
+  final db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   final _username = TextEditingController();
@@ -40,13 +40,14 @@ class _TelaCadastroState extends State<TelaCadastro> {
         );
         String uid = userCredential.user!.uid;
         db.collection("usuarios").doc(uid).set({
-          'id':uid,
-          'username':_username.text,
-          'email': _email.text,}
-        );
+          'id': uid,
+          'username': _username.text,
+          'email': _email.text,
+        });
         Navigator.pushReplacementNamed(context, '/');
-      } 
-      catch (error) {
+        User? usuario = userCredential.user!;
+        await usuario.updateDisplayName(_username.text);
+      } catch (error) {
         // Handle registration failure
         print("User registration failed: $error");
       }

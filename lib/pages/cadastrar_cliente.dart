@@ -22,7 +22,7 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
   final _sexoCliente = TextEditingController();
   final _pchurnCliente = TextEditingController();
   final User? user = FirebaseAuth.instance.currentUser;
-  
+
   List<String> churn = ['Sim', 'Não'];
 
   // final _nomeCliente = GlobalKey<FormState>();
@@ -35,13 +35,12 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
       "sexo": _sexoCliente.text,
       "probabilidade_churn": _pchurnCliente.text,
     };
-    
-    
-    String? uid = user?.uid;  
+
+    String? uid = user?.uid;
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('usuarios').doc(uid);
-    CollectionReference listaClientesRef = userDocRef.collection('listaclientes');
-
+    CollectionReference listaClientesRef =
+        userDocRef.collection('listaclientes');
 
     listaClientesRef.add(cliente).then((DocumentReference doc) =>
         print('DocumentSnapshot added with ID: ${doc.id}'));
@@ -123,9 +122,17 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               height: 20,
             ),
             Botao(fn: cadastrarcliente, texto: "Cadastrar"),
+            const SizedBox(
+              height: 20,
+            ),
+            Botao(fn: () => navegar(context, '/menu'), texto: "Voltar"),
           ],
         ),
       ),
     )));
+  }
+
+  void navegar(BuildContext context, String routeName) {
+    Navigator.pushReplacementNamed(context, routeName);
   }
 }
