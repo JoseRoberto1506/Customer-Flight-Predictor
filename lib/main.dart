@@ -6,6 +6,7 @@ import './pages/cadastrar_cliente.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import './pages/menu.dart';
+import './pages/config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MainApp extends StatelessWidget {
         '/cadastrarcliente': (context) => const TelaCadastrarCliente(),
         '/menu': (context) => TelaMenu(),
         '/listaClientes': (context) => const ListaClientes(),
+        '/configuracoes':(context)=> const TelaConfiguracoes(),
       },
     );
   }

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'componentes/botao.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TelaMenu extends StatefulWidget {
-  const TelaMenu({super.key});
+class TelaConfiguracoes extends StatefulWidget {
+  const TelaConfiguracoes({super.key});
 
   @override
-  State<TelaMenu> createState() => _TelaMenu();
+  State<TelaConfiguracoes> createState() => _TelaConfiguracoes();
 }
 
-class _TelaMenu extends State<TelaMenu> {
+class _TelaConfiguracoes extends State<TelaConfiguracoes> {
   CollectionReference usercollection =
       FirebaseFirestore.instance.collection('usuarios');
 

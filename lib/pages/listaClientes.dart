@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'componentes/dialogConfirm.dart';
+import 'componentes/caixabonita.dart';
 
 class ListaClientes extends StatefulWidget {
   const ListaClientes({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _ListaClientesState extends State<ListaClientes> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Lista de clientes'),
+              backgroundColor: Color(0xFF313133),
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
@@ -42,7 +44,8 @@ class _ListaClientesState extends State<ListaClientes> {
               itemBuilder: (context, i) {
                 final cliente = clientes[i];
 
-                return ListTile(
+                return CaixaBonita(
+                    filho: ListTile(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -50,6 +53,7 @@ class _ListaClientesState extends State<ListaClientes> {
                           builder: (context) => TelaCliente(cliente: cliente)),
                     );
                   },
+                  textColor: Colors.white,
                   title: Text(cliente['nome']),
                   subtitle: Text(cliente['cpf']),
                   trailing: SizedBox(
@@ -67,6 +71,8 @@ class _ListaClientesState extends State<ListaClientes> {
                             );
                           },
                           icon: const Icon(Icons.edit),
+                          color: Colors.white,
+                          
                         ),
                         IconButton(
                           onPressed: () async {
@@ -83,12 +89,13 @@ class _ListaClientesState extends State<ListaClientes> {
                             }
                           },
                           icon: const Icon(Icons.delete),
+                          color: Colors.white,
                         ),
                       ],
                     ),
                   ),
                   // Add more widgets here to display other client details
-                );
+                ));
               },
             ),
           );
