@@ -9,7 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TelaCadastrarCliente extends StatefulWidget {
-  const TelaCadastrarCliente({super.key});
+  const TelaCadastrarCliente({Key? key, this.cliente}) : super(key: key);
+  final Map<String, dynamic>? cliente;
 
   @override
   State<TelaCadastrarCliente> createState() => _TelaCadastrarCliente();
@@ -17,12 +18,31 @@ class TelaCadastrarCliente extends StatefulWidget {
 
 class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
   final db = FirebaseFirestore.instance;
-  final _nomeCliente = TextEditingController();
-  final _cpfCliente = TextEditingController();
-  final _nascimentoCliente = TextEditingController();
-  final _sexoCliente = TextEditingController();
-  final _pchurnCliente = TextEditingController();
+  late final TextEditingController _nomeCliente;
+  late final TextEditingController _cpfCliente;
+  late final TextEditingController _nascimentoCliente;
+  late final TextEditingController _sexoCliente;
+  late final TextEditingController _pchurnCliente;
   final User? user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _nomeCliente = TextEditingController();
+    _cpfCliente = TextEditingController();
+    _nascimentoCliente = TextEditingController();
+    _sexoCliente = TextEditingController();
+    _pchurnCliente = TextEditingController();
+
+    if (widget.cliente != null) {
+      _nomeCliente.text = widget.cliente?['nome'] ?? '';
+      _cpfCliente.text = widget.cliente?['cpf'] ?? '';
+      _nascimentoCliente.text = widget.cliente?['data_nascimento'] ?? '';
+      _sexoCliente.text = widget.cliente?['sexo'] ?? '';
+      _pchurnCliente.text = widget.cliente?['probabilidade_churn'] ?? '';
+    }
+  }
 
   List<String> churn = ['Sim', 'Não'];
 
@@ -41,9 +61,13 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
         FirebaseFirestore.instance.collection('usuarios').doc(uid);
     CollectionReference listaClientesRef =
         userDocRef.collection('listaclientes');
-
-    listaClientesRef.add(cliente).then((DocumentReference doc) =>
-        print('DocumentSnapshot added with ID: ${doc.id}'));
+    if (widget.cliente != null) {
+      //editar cliente
+      await listaClientesRef.doc(widget.cliente?['documentId']).update(cliente);
+    } else {
+      //criar cliente
+      await listaClientesRef.add(cliente);
+    }
 
     bool? confirmado = await ConfirmationDialog.show(
       context,

@@ -57,7 +57,15 @@ class _ListaClientesState extends State<ListaClientes> {
                     child: Row(
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    TelaCadastrarCliente(cliente: cliente),
+                              ),
+                            );
+                          },
                           icon: const Icon(Icons.edit),
                         ),
                         IconButton(
@@ -127,6 +135,4 @@ class _ListaClientesState extends State<ListaClientes> {
       print('cliente deletado');
     }
   }
-
-  Future<void> updateCliente(String documentId) async {}
 }
