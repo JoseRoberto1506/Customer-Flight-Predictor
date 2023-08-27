@@ -56,13 +56,13 @@ class _TelaConfiguracoes extends State<TelaConfiguracoes> {
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/cadastrarcliente'),
+                fn: () => navegar(context, '/sobre'),
                 texto: 'Sobre o app',
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/cadastrarcliente'),
-                texto: 'Sair',
+                fn: () => navegar(context, '/menu'),
+                texto: 'Voltar para Menu',
               ),
               const SizedBox(
                 height: 16.0,

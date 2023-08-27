@@ -28,6 +28,20 @@ class _ListaClientesState extends State<ListaClientes> {
               snapshot.data as List<Map<String, dynamic>>;
           return Scaffold(
             appBar: AppBar(
+              leading: Builder(
+                builder: (BuildContext context) {
+                  return IconButton(
+                    icon: const Icon(Icons.menu),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/menu');
+                      Scaffold.of(context).openDrawer();
+
+                    },
+                    tooltip:
+                        MaterialLocalizations.of(context).openAppDrawerTooltip,
+                  );
+                },
+              ),
               title: const Text('Lista de clientes'),
               backgroundColor: Color(0xFF313133),
               actions: <Widget>[

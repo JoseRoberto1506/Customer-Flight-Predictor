@@ -162,7 +162,7 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
             const SizedBox(
               height: 20,
             ),
-            Botao(fn: () => navegar(context, '/menu'), texto: "Voltar"),
+            Botao(fn: () => navegar(context, '/listaClientes'), texto: "Voltar"),
           ],
         ),
       ),

@@ -23,7 +23,7 @@ class Dropdown extends StatelessWidget {
           return SizedBox(
               width: 296,
               child: DropdownButtonFormField<String>(
-                isExpanded: true,
+                isExpanded: true, 
                 hint: Text(hint,
                     style: const TextStyle(
                       color: Colors.white,
@@ -47,9 +47,15 @@ class Dropdown extends StatelessWidget {
                 items: dropOpcoes
                     .map((op) => DropdownMenuItem(
                           value: op,
-                          child: Text(op),
+                          child: Text(
+                            op,
+                            style: TextStyle(
+                            color: Colors.white,)                          
+                            ),
+
                         ))
                     .toList(),
+                    dropdownColor: const Color(0xFF242425),
               ));
         });
   }

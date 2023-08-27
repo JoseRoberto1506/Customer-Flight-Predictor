@@ -1,4 +1,5 @@
 import 'package:cfp_app/pages/listaClientes.dart';
+import 'package:cfp_app/pages/sobreApp.dart';
 import 'package:flutter/material.dart';
 import './pages/login.dart';
 import './pages/cadastro.dart';
@@ -37,6 +38,7 @@ class MainApp extends StatelessWidget {
         '/menu': (context) => TelaMenu(),
         '/listaClientes': (context) => const ListaClientes(),
         '/configuracoes':(context)=> const TelaConfiguracoes(),
+        '/sobre':(context) => const TelaSobreAPP(),
       },
     );
   }

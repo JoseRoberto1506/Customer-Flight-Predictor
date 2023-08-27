@@ -56,7 +56,7 @@ class _TelaMenu extends State<TelaMenu> {
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/cadastrarcliente'),
+                fn: () => navegar(context, '/'),
                 texto: 'Sair',
               ),
               const SizedBox(
