@@ -51,7 +51,7 @@ class _TelaConfiguracoes extends State<TelaConfiguracoes> {
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/cadastrarcliente'),
+                fn: () => navegar(context, '/senha'),
                 texto: 'Alterar senha',
               ),
               const SizedBox(height: 30),
@@ -61,7 +61,7 @@ class _TelaConfiguracoes extends State<TelaConfiguracoes> {
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/senha'),
+                fn: () => navegar(context, '/manu'),
                 texto: 'Voltar para Menu',
               ),
               const SizedBox(

@@ -8,8 +8,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class TelaCliente extends StatefulWidget {
-  const TelaCliente({Key? key, required this.cliente, required this.clienteId})
-      : super(key: key);
+  const TelaCliente({
+    Key? key,
+    required this.cliente,
+    required this.clienteId,
+  }) : super(key: key);
   final Map<String, dynamic> cliente;
   final String? clienteId;
 
@@ -54,21 +57,22 @@ class _TelaClienteState extends State<TelaCliente> {
     }
   }
 
-  // deletarPlano(String documentId) async {
-  //   final User? user = FirebaseAuth.instance.currentUser;
-  //   String? uid = user?.uid;
-  //   if (uid != null) {
-  //     try {
-  //       CollectionReference listaPlanosRef = FirebaseFirestore.instance
-  //           .collection('listaPlanos')
-  //           .doc(uid)
-  //           .collection('listaPlanos');
-  //       await listaPlanosRef.doc(documentId).delete();
-  //     } catch (e) {
-  //       print('error: $e');
-  //     }
-  //   }
-  // }
+  deletarPlano(String documentId) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    String? uid = user?.uid;
+    if (uid != null) {
+      try {
+        CollectionReference listaPlanosRef = FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(uid)
+            .collection('listaPlanos');
+        await listaPlanosRef.doc(documentId).delete();
+        onPlanAdded();
+      } catch (e) {
+        print('error: $e');
+      }
+    }
+  }
 
   void onPlanAdded() {
     setState(() {
@@ -119,6 +123,7 @@ class _TelaClienteState extends State<TelaCliente> {
           },
         ),
         title: const Text('Dados do cliente'),
+        backgroundColor: Color(0xFF313133),
       ),
       body: FutureBuilder(
         future: Future.wait([dadosClienteFuture, planosClienteFuture]),
@@ -283,8 +288,21 @@ class _TelaClienteState extends State<TelaCliente> {
                                             icon: Icon(Icons.edit),
                                             color: Colors.white),
                                         IconButton(
-                                          onPressed: () {},
-                                          icon: Icon(Icons.delete),
+                                          onPressed: () async {
+                                            bool? deleteConfirmed =
+                                                await ConfirmationDialog.show(
+                                              context,
+                                              'Confirmação',
+                                              'Tem certeza que deseja excluir este plano?',
+                                            );
+
+                                            if (deleteConfirmed == true) {
+                                              await deletarPlano(plano['id']);
+                                              planosClienteFuture =
+                                                  getPlanosCliente();
+                                            }
+                                          },
+                                          icon: const Icon(Icons.delete),
                                           color: Colors.white,
                                         ),
                                       ],

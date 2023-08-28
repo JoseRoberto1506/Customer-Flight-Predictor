@@ -111,12 +111,15 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               height: 52,
             ),
             CampoForm(
-              controller: _nomeCliente,
-              obscureText: false,
-              hintText: 'Nome completo',
-              icon: const Icon(Icons.person, color: Colors.white),
-              validator: (_) => null,
-            ),
+                controller: _nomeCliente,
+                obscureText: false,
+                hintText: 'Nome completo',
+                icon: const Icon(Icons.person, color: Colors.white),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                }),
             const SizedBox(
               height: 20,
             ),
@@ -125,7 +128,14 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               obscureText: false,
               hintText: 'CPF',
               icon: const Icon(Icons.person, color: Colors.white),
-              validator: (_) => null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'campo obrigatório';
+                } else if (!isNumeric(value) || value.length != 11) {
+                  return 'cpf inválido';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 20,
@@ -135,7 +145,14 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               obscureText: false,
               hintText: 'Data de nascimento',
               icon: const Icon(Icons.person, color: Colors.white),
-              validator: (_) => null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Campo obrigatório';
+                } else if (!isNumeric(value) || value.length != 8) {
+                  return 'Data de nascimento inválida';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 20,
@@ -162,11 +179,19 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
             const SizedBox(
               height: 20,
             ),
-            Botao(fn: () => navegar(context, '/listaClientes'), texto: "Voltar"),
+            Botao(
+                fn: () => navegar(context, '/listaClientes'), texto: "Voltar"),
           ],
         ),
       ),
     )));
+  }
+
+  bool isNumeric(String value) {
+    if (value == null) {
+      return false;
+    }
+    return double.tryParse(value) != null;
   }
 
   void navegar(BuildContext context, String routeName) {
