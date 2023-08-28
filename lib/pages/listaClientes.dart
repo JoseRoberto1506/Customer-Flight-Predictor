@@ -31,11 +31,10 @@ class _ListaClientesState extends State<ListaClientes> {
               leading: Builder(
                 builder: (BuildContext context) {
                   return IconButton(
-                    icon: const Icon(Icons.menu),
+                    icon: const Icon(Icons.arrow_back_sharp),
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/menu');
                       Scaffold.of(context).openDrawer();
-
                     },
                     tooltip:
                         MaterialLocalizations.of(context).openAppDrawerTooltip,
@@ -57,6 +56,7 @@ class _ListaClientesState extends State<ListaClientes> {
               itemCount: clientes.length,
               itemBuilder: (context, i) {
                 final cliente = clientes[i];
+                final clienteId = cliente['documentId'];
 
                 return CaixaBonita(
                     filho: ListTile(
@@ -64,7 +64,10 @@ class _ListaClientesState extends State<ListaClientes> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => TelaCliente(cliente: cliente)),
+                          builder: (context) => TelaCliente(
+                                cliente: cliente,
+                                clienteId: clienteId,
+                              )),
                     );
                   },
                   textColor: Colors.white,
@@ -86,7 +89,6 @@ class _ListaClientesState extends State<ListaClientes> {
                           },
                           icon: const Icon(Icons.edit),
                           color: Colors.white,
-                          
                         ),
                         IconButton(
                           onPressed: () async {
