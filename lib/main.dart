@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import './pages/menu.dart';
 import './pages/config.dart';
+import './pages/alterarSenha.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +40,7 @@ class MainApp extends StatelessWidget {
         '/listaClientes': (context) => const ListaClientes(),
         '/configuracoes':(context)=> const TelaConfiguracoes(),
         '/sobre':(context) => const TelaSobreAPP(),
+        '/senha': (context) => const TelaAlterarSenha(),
       },
     );
   }
