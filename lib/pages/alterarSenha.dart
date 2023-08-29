@@ -88,7 +88,7 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
                   if (_formKey.currentState!.validate()) {
                     if (_novaSenha.text == _confirmarNovaSenha.text) {
                       alterarSenha(_novaSenha.text);
-                      navegar(context, '/menu');
+                      navegar(context, '/configuracoes');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -102,7 +102,7 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
               ),
               const SizedBox(height: 30),
               Botao(
-                fn: () => navegar(context, '/menu'),
+                fn: () => navegar(context, '/configuracoes'),
                 texto: 'Voltar',
               ),
             ],

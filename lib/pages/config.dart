@@ -46,7 +46,7 @@ class _TelaConfiguracoes extends State<TelaConfiguracoes> {
               ),
               const SizedBox(height: 70),
               Botao(
-                fn: () => navegar(context, '/cadastrarcliente'),
+                fn: () => navegar(context, '/nome'),
                 texto: 'Alterar usuário',
               ),
               const SizedBox(height: 30),

@@ -98,7 +98,7 @@ class _TelaLoginState extends State<TelaLogin> {
     String email = _email.text;
     String senha = _senha.text;
 
-    if (email.isNull || email.isEmpty) {
+    if (email.isEmpty || email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -108,7 +108,7 @@ class _TelaLoginState extends State<TelaLogin> {
         ),
       );
       return null;
-    } else if (senha.isNull || senha.isEmpty) {
+    } else if (senha.isEmpty || senha.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

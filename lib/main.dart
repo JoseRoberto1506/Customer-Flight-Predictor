@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import './pages/menu.dart';
 import './pages/config.dart';
 import './pages/alterarSenha.dart';
+import './pages/alterarNome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class MainApp extends StatelessWidget {
         '/configuracoes':(context)=> const TelaConfiguracoes(),
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
+        '/nome' : (context) => const TelaAlterarNomeUsuario(),
       },
     );
   }
