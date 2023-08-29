@@ -1,3 +1,4 @@
+import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import 'componentes/botao.dart';
@@ -75,7 +76,7 @@ class _TelaLoginState extends State<TelaLogin> {
 
         // Botão de entrar
         Botao(
-          fn: logar,
+          fn: validarCampos,
           texto: 'Entrar',
         ),
 
@@ -93,20 +94,71 @@ class _TelaLoginState extends State<TelaLogin> {
     )));
   }
 
+  validarCampos() {
+    String email = _email.text;
+    String senha = _senha.text;
+
+    if (email.isNull || email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Por favor, insira um email.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      return null;
+    } else if (senha.isNull || senha.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Por favor, digite a senha.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      return null;
+    }
+
+    logar();
+  }
+
   logar() async {
     try {
       await _auth.signInWithEmailAndPassword(
         email: _email.text,
         password: _senha.text,
       );
-
-      // Login successful, navigate to a new screen
-      // For example:
       Navigator.pushReplacementNamed(context, '/menu');
-    } catch (error) {
-      // Handle login failure and provide user feedback
-      print("Login failed: $error");
-      // Display an error message to the user or handle it in your UI
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'invalid-email') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Digite um email válido.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      } else if (error.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Email não cadastrado.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      } else if (error.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Senha incorreta. Tente novamente.',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
     }
   }
 }

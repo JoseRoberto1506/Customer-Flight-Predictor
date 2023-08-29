@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cfp_app/pages/componentes/botao.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -47,9 +49,35 @@ class _TelaCadastroState extends State<TelaCadastro> {
         Navigator.pushReplacementNamed(context, '/');
         User? usuario = userCredential.user!;
         await usuario.updateDisplayName(_username.text);
-      } catch (error) {
-        // Handle registration failure
-        print("User registration failed: $error");
+      } on FirebaseAuthException catch (error) {
+        if (error.code == 'invalid-email') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Insira um email válido.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        } else if (error.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Este email já está cadastrado.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        } else if (error.code == 'weak-password') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Insira uma senha mais forte.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
       }
     }
   }
@@ -130,6 +158,8 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, confirme sua senha';
+                  } else if (value != _senha.text) {
+                    return 'As senhas não coincidem.';
                   }
                   return null;
                 },

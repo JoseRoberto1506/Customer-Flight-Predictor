@@ -30,13 +30,16 @@ class MainApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFF242425),
           buttonTheme: const ButtonThemeData(
             buttonColor: Color(0xFF0EA5B0),
+          ),
+          snackBarTheme: const SnackBarThemeData(
+            backgroundColor: Colors.red,
           )),
       initialRoute: '/',
       routes: {
         '/': (context) => const TelaLogin(),
         '/cadastro': (context) => const TelaCadastro(),
         '/cadastrarcliente': (context) => const TelaCadastrarCliente(),
-        '/menu': (context) => TelaMenu(),
+        '/menu': (context) => const TelaMenu(),
         '/listaClientes': (context) => const ListaClientes(),
         '/configuracoes':(context)=> const TelaConfiguracoes(),
         '/sobre':(context) => const TelaSobreAPP(),
