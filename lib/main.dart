@@ -10,6 +10,7 @@ import './pages/menu.dart';
 import './pages/config.dart';
 import './pages/alterarSenha.dart';
 import './pages/alterarNome.dart';
+import './pages/alterarPlano.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,7 @@ class MainApp extends StatelessWidget {
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
         '/nome' : (context) => const TelaAlterarNomeUsuario(),
+        '/alterarPlano': (context) => TelaAlterarPlano(),
       },
     );
   }

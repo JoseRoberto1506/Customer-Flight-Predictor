@@ -36,7 +36,7 @@ class TelaSobreAPP extends StatelessWidget {
               
               ),
             ),
-            SizedBox(height: 50),
+            SizedBox(height: 10),
             Botao(
               fn: () => navegar(context, '/configuracoes'),
               texto: 'Voltar para Configurações',

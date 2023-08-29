@@ -284,7 +284,11 @@ class _TelaClienteState extends State<TelaCliente> {
                                     child: Row(
                                       children: [
                                         IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pushReplacementNamed(
+                                                  context, '/alterarPlano',
+                                                  arguments: plano);
+                                            },
                                             icon: Icon(Icons.edit),
                                             color: Colors.white),
                                         IconButton(
