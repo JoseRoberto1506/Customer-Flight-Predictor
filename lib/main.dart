@@ -1,5 +1,5 @@
 import 'package:cfp_app/pages/lista_clientes.dart';
-import 'package:cfp_app/pages/sobreApp.dart';
+import 'package:cfp_app/pages/sobre_app.dart';
 import 'package:flutter/material.dart';
 import './pages/login.dart';
 import './pages/cadastro.dart';
