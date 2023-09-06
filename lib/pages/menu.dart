@@ -1,8 +1,6 @@
-import 'package:cfp_app/pages/cadastrar_cliente.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'componentes/botao.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TelaMenu extends StatefulWidget {
   const TelaMenu({super.key});
@@ -12,14 +10,7 @@ class TelaMenu extends StatefulWidget {
 }
 
 class _TelaMenu extends State<TelaMenu> {
-  CollectionReference usercollection =
-      FirebaseFirestore.instance.collection('usuarios');
-
   final User? user = FirebaseAuth.instance.currentUser;
-  final cadastrarClienteRoute = PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        const TelaCadastrarCliente(),
-  );
   String? nome = '';
 
   @override
@@ -46,7 +37,7 @@ class _TelaMenu extends State<TelaMenu> {
               ),
               const SizedBox(height: 70),
               Botao(
-                fn: () => navegar(context, '/listaClientes'),
+                fn: () => navegar(context, '/lista_clientes'),
                 texto: 'Lista de Clientes',
               ),
               const SizedBox(height: 30),

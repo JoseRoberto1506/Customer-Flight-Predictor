@@ -1,4 +1,4 @@
-import 'package:cfp_app/pages/listaClientes.dart';
+import 'package:cfp_app/pages/lista_clientes.dart';
 import 'package:cfp_app/pages/sobreApp.dart';
 import 'package:flutter/material.dart';
 import './pages/login.dart';
@@ -40,9 +40,9 @@ class MainApp extends StatelessWidget {
       routes: {
         '/': (context) => const TelaLogin(),
         '/cadastro': (context) => const TelaCadastro(),
-        '/cadastrarcliente': (context) => const TelaCadastrarCliente(),
+        '/cadastrar_cliente': (context) => const TelaCadastrarCliente(),
         '/menu': (context) => const TelaMenu(),
-        '/listaClientes': (context) => const ListaClientes(),
+        '/lista_clientes': (context) => const ListaClientes(),
         '/configuracoes':(context)=> const TelaConfiguracoes(),
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
