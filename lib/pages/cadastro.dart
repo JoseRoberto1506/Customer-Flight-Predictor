@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cfp_app/pages/componentes/campoForm.dart';
 import 'package:cfp_app/pages/componentes/hiperlink.dart';
-import 'package:cfp_app/modelos/User.dart' as LocalUser;
+import 'package:cfp_app/models/user_model.dart' as local_user;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TelaCadastro extends StatefulWidget {
@@ -27,7 +27,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
   Future<void> cadastrar() async {
     if (_formKey.currentState!.validate()) {
       // Form validation succeeded, create a User object
-      final user = LocalUser.User(
+      final user = local_user.User(
         username: _username.text,
         email: _email.text,
         password: _senha.text,
