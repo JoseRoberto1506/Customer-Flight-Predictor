@@ -1,60 +1,38 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'componentes/dialogConfirm.dart';
-import 'package:cfp_app/pages/Provider/ClientesProvider.dart';
 import 'package:cfp_app/pages/componentes/addPlanDialog.dart';
 import 'package:cfp_app/pages/componentes/botao.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cfp_app/models/cliente_model.dart';
+import 'package:cfp_app/providers/clientes_provider.dart';
 
 class TelaCliente extends StatefulWidget {
+  final Cliente cliente;
+  final String? clienteId;
+
   const TelaCliente({
     Key? key,
     required this.cliente,
     required this.clienteId,
   }) : super(key: key);
-  final Map<String, dynamic> cliente;
-  final String? clienteId;
 
   @override
   State<TelaCliente> createState() => _TelaClienteState();
 }
 
 class _TelaClienteState extends State<TelaCliente> {
-  late Future<List<Map<String, dynamic>>> dadosClienteFuture;
+  late Future<Cliente> dadosClienteFuture;
   late Future<List<Map<String, dynamic>>> planosClienteFuture;
+  final ClientesProvider clienteController = ClientesProvider();
 
   @override
   void initState() {
     super.initState();
     // Fetch client data when the widget is initialized
-    dadosClienteFuture = getDadosCliente();
+    dadosClienteFuture = clienteController.getDadosCliente(widget.clienteId);
     planosClienteFuture = getPlanosCliente();
-  }
-
-  Future<List<Map<String, dynamic>>> getDadosCliente() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String? uid = user?.uid;
-
-    if (uid != null) {
-      DocumentReference dadosClienteref = FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .collection('listaclientes')
-          .doc(widget.cliente['documentId']);
-
-      DocumentSnapshot dadosClienteSnapshot = await dadosClienteref.get();
-
-      List<Map<String, dynamic>> dados_do_cliente = [];
-      Map<String, dynamic> data =
-          dadosClienteSnapshot.data() as Map<String, dynamic>;
-      data['documentId'] = dadosClienteSnapshot.id;
-      dados_do_cliente.add(data);
-
-      return dados_do_cliente;
-    } else {
-      return [];
-    }
   }
 
   deletarPlano(String documentId) async {
@@ -116,7 +94,7 @@ class _TelaClienteState extends State<TelaCliente> {
             return IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/listaClientes');
+                Navigator.pushReplacementNamed(context, '/lista_clientes');
               },
               tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             );
@@ -135,16 +113,10 @@ class _TelaClienteState extends State<TelaCliente> {
           } else if (!snapshot.hasData) {
             return Center(child: Text('No data available'));
           } else {
-            List<Map<String, dynamic>> dados_cliente =
-                snapshot.data?[0] as List<Map<String, dynamic>>;
+            Cliente dadosCliente = snapshot.data as Cliente;
             List<Map<String, dynamic>> planosCliente =
                 snapshot.data?[1] as List<Map<String, dynamic>>;
 
-            final data = snapshot.data;
-            if (data != null && data.length == 2) {
-              dados_cliente = (data[0] as List<Map<String, dynamic>>?) ?? [];
-              planosCliente = (data[1] as List<Map<String, dynamic>>?) ?? [];
-            }
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,7 +125,7 @@ class _TelaClienteState extends State<TelaCliente> {
                     height: 52,
                   ),
                   Text(
-                    dados_cliente[0]['nome'],
+                    dadosCliente.getNome(),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     style: TextStyle(
@@ -182,7 +154,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         child: Column(
                           children: [
                             Text(
-                              'CPF: ${dados_cliente[0]['cpf']}',
+                              'CPF: ${dadosCliente.getCPF()}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -193,7 +165,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Data de nascimento: ${dados_cliente[0]['data_nascimento']}',
+                              'Data de nascimento: ${dadosCliente.getDataNasc()}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -204,7 +176,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Sexo: ${dados_cliente[0]['sexo']}',
+                              'Sexo: ${dadosCliente.getSexo()}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -215,7 +187,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Churn: ${dados_cliente[0]['probabilidade_churn']}',
+                              'Churn: ${dadosCliente.getChanceChurn()}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(

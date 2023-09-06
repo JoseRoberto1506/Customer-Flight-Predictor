@@ -7,10 +7,10 @@ import './componentes/botao.dart';
 import './componentes/dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cfp_app/models/cliente_model.dart';
 
 class TelaCadastrarCliente extends StatefulWidget {
-  const TelaCadastrarCliente({Key? key, this.cliente}) : super(key: key);
-  final Map<String, dynamic>? cliente;
+  const TelaCadastrarCliente({Key? key}) : super(key: key);
 
   @override
   State<TelaCadastrarCliente> createState() => _TelaCadastrarCliente();
@@ -18,58 +18,50 @@ class TelaCadastrarCliente extends StatefulWidget {
 
 class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
   final db = FirebaseFirestore.instance;
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nomeCliente;
   late final TextEditingController _cpfCliente;
   late final TextEditingController _nascimentoCliente;
   late final TextEditingController _sexoCliente;
-  late final TextEditingController _pchurnCliente;
+  late final TextEditingController _pChurnCliente;
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-
     _nomeCliente = TextEditingController();
     _cpfCliente = TextEditingController();
     _nascimentoCliente = TextEditingController();
     _sexoCliente = TextEditingController();
-    _pchurnCliente = TextEditingController();
-
-    if (widget.cliente != null) {
-      _nomeCliente.text = widget.cliente?['nome'] ?? '';
-      _cpfCliente.text = widget.cliente?['cpf'] ?? '';
-      _nascimentoCliente.text = widget.cliente?['data_nascimento'] ?? '';
-      _sexoCliente.text = widget.cliente?['sexo'] ?? '';
-      _pchurnCliente.text = widget.cliente?['probabilidade_churn'] ?? '';
-    }
+    _pChurnCliente = TextEditingController();
   }
-
-  final _formKey = GlobalKey<FormState>();
 
   Future<void> cadastrarcliente() async {
     if (_formKey.currentState!.validate()) {
-      final cliente = <String, dynamic>{
-        "nome": _nomeCliente.text,
-        "cpf": _cpfCliente.text,
-        "data_nascimento": _nascimentoCliente.text,
-        "sexo": _sexoCliente.text,
-        "probabilidade_churn": _pchurnCliente.text,
-      };
+      final cliente = Cliente(
+          nomeCliente: _nomeCliente.text,
+          cpfCliente: _cpfCliente.text,
+          dataNascCliente: _nascimentoCliente.text,
+          sexoCliente: _sexoCliente.text,
+          chanceChurn: _pChurnCliente.text);
+      final Map<String, dynamic> clienteJson = cliente.toJson();
 
       String? uid = user?.uid;
-      DocumentReference userDocRef =
-          FirebaseFirestore.instance.collection('usuarios').doc(uid);
+      DocumentReference userDocRef = db.collection('usuarios').doc(uid);
       CollectionReference listaClientesRef =
           userDocRef.collection('listaclientes');
+      QuerySnapshot existingClient = await listaClientesRef
+          .where('cpfCliente', isEqualTo: _cpfCliente.text)
+          .get();
 
-      if (widget.cliente != null) {
-        //editar cliente
-        await listaClientesRef
-            .doc(widget.cliente?['documentId'])
-            .update(cliente);
+      if (existingClient.docs.isNotEmpty) {
+        String clientId = existingClient.docs[0].id;
+        await listaClientesRef.doc(clientId).update(clienteJson);
       } else {
-        //criar cliente
-        await listaClientesRef.add(cliente);
+        DocumentReference novoCliente = await listaClientesRef.add(clienteJson);
+        String idNovoCliente = novoCliente.id;
+        clienteJson['idCliente'] = idNovoCliente;
+        await novoCliente.update({'idCliente': idNovoCliente});
       }
 
       bool? confirmado = await ConfirmationDialog.show(
@@ -82,9 +74,9 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
         _cpfCliente.clear();
         _nascimentoCliente.clear();
         _sexoCliente.clear();
-        _pchurnCliente.clear();
+        _pChurnCliente.clear();
       } else {
-        navegar(context, '/listaClientes');
+        navegar(context, '/lista_clientes');
       }
     }
   }
@@ -173,7 +165,7 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               height: 20,
             ),
             Dropdown(
-              controller: _pchurnCliente,
+              controller: _pChurnCliente,
               dropOpcoes: ['Grande chance de sair', 'Pouca chance de sair'],
               hint: 'Probabilidade de Churn',
               icon: Icon(Icons.directions_run_outlined, color: Colors.white),
@@ -186,7 +178,7 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
               height: 20,
             ),
             Botao(
-                fn: () => navegar(context, '/listaClientes'), texto: "Voltar"),
+                fn: () => navegar(context, '/lista_clientes'), texto: "Voltar"),
           ],
         ),
       ),

@@ -1,10 +1,10 @@
 import 'package:cfp_app/pages/cadastrar_cliente.dart';
 import 'package:cfp_app/pages/cliente.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'componentes/dialogConfirm.dart';
 import 'componentes/caixabonita.dart';
+import 'package:cfp_app/models/cliente_model.dart';
+import 'package:cfp_app/providers/clientes_provider.dart';
 
 class ListaClientes extends StatefulWidget {
   const ListaClientes({Key? key}) : super(key: key);
@@ -14,18 +14,19 @@ class ListaClientes extends StatefulWidget {
 }
 
 class _ListaClientesState extends State<ListaClientes> {
+  final ClientesProvider clienteController = ClientesProvider();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getClientList(),
+      future: clienteController.fetchClients(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // While data is being fetched
         } else if (snapshot.hasError) {
           return const Text('Error loading data'); // If there's an error
         } else {
-          List<Map<String, dynamic>> clientes =
-              snapshot.data as List<Map<String, dynamic>>;
+          List<Cliente> listaDeClientes = snapshot.data as List<Cliente>;
           return Scaffold(
             appBar: AppBar(
               leading: Builder(
@@ -42,21 +43,21 @@ class _ListaClientesState extends State<ListaClientes> {
                 },
               ),
               title: const Text('Lista de clientes'),
-              backgroundColor: Color(0xFF313133),
+              backgroundColor: const Color(0xFF313133),
               actions: <Widget>[
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/cadastrarcliente');
+                    Navigator.of(context).pushNamed('/cadastrar_cliente');
                   },
                   icon: const Icon(Icons.add),
                 ),
               ],
             ),
             body: ListView.builder(
-              itemCount: clientes.length,
+              itemCount: clienteController.getQuantidadeClientes(),
               itemBuilder: (context, i) {
-                final cliente = clientes[i];
-                final clienteId = cliente['documentId'];
+                final cliente = listaDeClientes[i];
+                final clienteId = cliente.idCliente;
 
                 return CaixaBonita(
                     filho: ListTile(
@@ -71,8 +72,8 @@ class _ListaClientesState extends State<ListaClientes> {
                     );
                   },
                   textColor: Colors.white,
-                  title: Text(cliente['nome']),
-                  subtitle: Text(cliente['cpf']),
+                  title: Text(cliente.getNome()),
+                  subtitle: Text(cliente.getCPF()),
                   trailing: SizedBox(
                     width: 100,
                     child: Row(
@@ -83,7 +84,7 @@ class _ListaClientesState extends State<ListaClientes> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    TelaCadastrarCliente(cliente: cliente),
+                                    const TelaCadastrarCliente(),
                               ),
                             );
                           },
@@ -100,7 +101,8 @@ class _ListaClientesState extends State<ListaClientes> {
                             );
 
                             if (deleteConfirmed == true) {
-                              await deletarCliente(cliente['documentId']);
+                              await clienteController
+                                  .deletarCliente(cliente.idCliente);
                               setState(() {});
                             }
                           },
@@ -118,44 +120,5 @@ class _ListaClientesState extends State<ListaClientes> {
         }
       },
     );
-  }
-
-  Future<List<Map<String, dynamic>>> getClientList() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String? uid = user?.uid;
-
-    if (uid != null) {
-      CollectionReference listaClientesRef = FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .collection('listaclientes');
-
-      QuerySnapshot listaClientesSnapshot = await listaClientesRef.get();
-
-      List<Map<String, dynamic>> clientes = [];
-      listaClientesSnapshot.docs.forEach((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data['documentId'] = doc.id;
-        clientes.add(data);
-      });
-
-      return clientes;
-    } else {
-      return [];
-    }
-  }
-
-  Future<void> deletarCliente(String documentId) async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String? uid = user?.uid;
-
-    if (uid != null) {
-      CollectionReference listaClientesRef = FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .collection('listaclientes');
-      await listaClientesRef.doc(documentId).delete();
-      print('cliente deletado');
-    }
   }
 }
