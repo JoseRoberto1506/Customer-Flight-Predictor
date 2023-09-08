@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cfp_app/pages/cliente.dart';
+import 'package:cfp_app/models/cliente_model.dart';
 
 class AddPlanDialog extends StatefulWidget {
   const AddPlanDialog(
@@ -10,8 +11,8 @@ class AddPlanDialog extends StatefulWidget {
       required this.clienteId,
       required this.onPlanAdded})
       : super(key: key);
-  final Map<String, dynamic> cliente;
-  final String clienteId;
+  final Cliente cliente;
+  final String? clienteId;
   final VoidCallback onPlanAdded;
 
   @override
@@ -114,7 +115,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
     );
   }
 
-  _salvarPlano(String clienteId) async {
+  _salvarPlano(String? clienteId) async {
     String? uid = user?.uid;
     CollectionReference listaPlanosRef = FirebaseFirestore.instance
         .collection('usuarios')

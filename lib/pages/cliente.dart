@@ -69,7 +69,7 @@ class _TelaClienteState extends State<TelaCliente> {
           .collection('listaPlanos');
 
       QuerySnapshot planosSnapshot = await listaPlanosRef
-          .where('clienteId', isEqualTo: widget.cliente['documentId'])
+          .where('clienteId', isEqualTo: widget.clienteId)
           .get();
 
       List<Map<String, dynamic>> planos = [];
@@ -113,7 +113,7 @@ class _TelaClienteState extends State<TelaCliente> {
           } else if (!snapshot.hasData) {
             return Center(child: Text('No data available'));
           } else {
-            Cliente dadosCliente = snapshot.data as Cliente;
+            Cliente? novoCliente = snapshot.data?[0] as Cliente?;
             List<Map<String, dynamic>> planosCliente =
                 snapshot.data?[1] as List<Map<String, dynamic>>;
 
@@ -125,7 +125,7 @@ class _TelaClienteState extends State<TelaCliente> {
                     height: 52,
                   ),
                   Text(
-                    dadosCliente.getNome(),
+                    (novoCliente?.getNome() ?? 'Erro ao carregar'),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     style: TextStyle(
@@ -154,7 +154,7 @@ class _TelaClienteState extends State<TelaCliente> {
                         child: Column(
                           children: [
                             Text(
-                              'CPF: ${dadosCliente.getCPF()}',
+                              'CPF: ${(novoCliente?.getCPF() ?? '00000000000')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -165,7 +165,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Data de nascimento: ${dadosCliente.getDataNasc()}',
+                              'Data de nascimento: ${(novoCliente?.getDataNasc() ?? '00000000')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -176,7 +176,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Sexo: ${dadosCliente.getSexo()}',
+                              'Sexo: ${(novoCliente?.getSexo() ?? 'Erro ao carregar')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -187,7 +187,7 @@ class _TelaClienteState extends State<TelaCliente> {
                               ),
                             ),
                             Text(
-                              'Churn: ${dadosCliente.getChanceChurn()}',
+                              'Churn: ${(novoCliente?.getChanceChurn() ?? 'Erro ao carregar')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -207,7 +207,7 @@ class _TelaClienteState extends State<TelaCliente> {
                                     builder: (BuildContext context) {
                                       return AddPlanDialog(
                                         cliente: widget.cliente,
-                                        clienteId: widget.cliente['documentId'],
+                                        clienteId: widget.clienteId,
                                         onPlanAdded: onPlanAdded,
                                       );
                                     },

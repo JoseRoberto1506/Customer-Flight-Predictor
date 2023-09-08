@@ -57,7 +57,7 @@ class _ListaClientesState extends State<ListaClientes> {
               itemCount: clienteController.getQuantidadeClientes(),
               itemBuilder: (context, i) {
                 final cliente = listaDeClientes[i];
-                final clienteId = cliente.idCliente;
+                final String? clienteId = cliente.idCliente;
 
                 return CaixaBonita(
                     filho: ListTile(
