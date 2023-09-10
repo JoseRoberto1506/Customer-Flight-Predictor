@@ -1,12 +1,13 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+import 'package:cfp_app/providers/plano_repository.dart';
+
 import 'componentes/dialogConfirm.dart';
 import 'package:cfp_app/pages/componentes/addPlanDialog.dart';
 import 'package:cfp_app/pages/componentes/botao.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfp_app/models/cliente_model.dart';
 import 'package:cfp_app/providers/clientes_provider.dart';
+import 'package:cfp_app/models/plano_acao_model.dart';
+
 
 class TelaCliente extends StatefulWidget {
   final Cliente cliente;
@@ -24,69 +25,27 @@ class TelaCliente extends StatefulWidget {
 
 class _TelaClienteState extends State<TelaCliente> {
   late Future<Cliente> dadosClienteFuture;
-  late Future<List<Map<String, dynamic>>> planosClienteFuture;
+  late Future<List<PlanoAcao>> planosClienteFuture;
   final ClientesProvider clienteController = ClientesProvider();
+  final PlanoAcaoRepository planoAcaoController = PlanoAcaoRepository();
 
   @override
   void initState() {
     super.initState();
-    // Fetch client data when the widget is initialized
     dadosClienteFuture = clienteController.getDadosCliente(widget.clienteId);
-    planosClienteFuture = getPlanosCliente();
-  }
+    planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
 
-  deletarPlano(String documentId) async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    String? uid = user?.uid;
-    if (uid != null) {
-      try {
-        CollectionReference listaPlanosRef = FirebaseFirestore.instance
-            .collection('usuarios')
-            .doc(uid)
-            .collection('listaPlanos');
-        await listaPlanosRef.doc(documentId).delete();
-        onPlanAdded();
-      } catch (e) {
-        print('error: $e');
-      }
-    }
   }
 
   void onPlanAdded() {
     setState(() {
-      planosClienteFuture = getPlanosCliente();
+      planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
     });
-  }
-
-  Future<List<Map<String, dynamic>>> getPlanosCliente() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-    final String? uid = user?.uid;
-
-    if (uid != null) {
-      CollectionReference listaPlanosRef = FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .collection('listaPlanos');
-
-      QuerySnapshot planosSnapshot = await listaPlanosRef
-          .where('clienteId', isEqualTo: widget.clienteId)
-          .get();
-
-      List<Map<String, dynamic>> planos = [];
-      planosSnapshot.docs.forEach((doc) {
-        Map<String, dynamic> planoData = doc.data() as Map<String, dynamic>;
-        planoData['id'] = doc.id; // Add the plan's ID to the data
-        planos.add(planoData);
-      });
-
-      return planos;
-    } else {
-      return [];
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -114,9 +73,8 @@ class _TelaClienteState extends State<TelaCliente> {
             return Center(child: Text('No data available'));
           } else {
             Cliente? novoCliente = snapshot.data?[0] as Cliente?;
-            List<Map<String, dynamic>> planosCliente =
-                snapshot.data?[1] as List<Map<String, dynamic>>;
-
+            List<PlanoAcao> planosCliente = snapshot.data?[1] as List<PlanoAcao>;
+            
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -219,8 +177,11 @@ class _TelaClienteState extends State<TelaCliente> {
                       ),
                     ),
                   ),
+                
+                  
                   // Display plans
                   if (planosCliente.isNotEmpty)
+                  
                     Column(
                       children: [
                         Text(
@@ -234,67 +195,87 @@ class _TelaClienteState extends State<TelaCliente> {
                           padding: const EdgeInsets.all(30.0),
                           child: Column(
                             children: planosCliente.map((plano) {
-                              return ListTile(
-                                  title: Text(
-                                    plano['nome'],
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: plano['tarefas']
-                                        .map<Widget>((tarefa) => Text(
-                                              tarefa,
-                                              style: TextStyle(
-                                                  color:
-                                                      Colors.lightBlueAccent),
-                                            ))
-                                        .toList(),
-                                  ),
-                                  trailing: SizedBox(
-                                    width: 100,
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              Navigator.pushReplacementNamed(
-                                                  context, '/alterarPlano',
-                                                  arguments: plano);
-                                            },
-                                            icon: Icon(Icons.edit),
-                                            color: Colors.white),
-                                        IconButton(
-                                          onPressed: () async {
-                                            bool? deleteConfirmed =
-                                                await ConfirmationDialog.show(
-                                              context,
-                                              'Confirmação',
-                                              'Tem certeza que deseja excluir este plano?',
-                                            );
-
-                                            if (deleteConfirmed == true) {
-                                              await deletarPlano(plano['id']);
-                                              planosClienteFuture =
-                                                  getPlanosCliente();
-                                            }
-                                          },
-                                          icon: const Icon(Icons.delete),
+                              return Card(
+                                  color: Colors.grey[800],
+                                  margin: const EdgeInsets.symmetric(vertical: 10),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
+                                        title: Text( plano.nome,
+                                        style:  TextStyle(
                                           color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ],
-                                    ),
-                                  ));
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: plano.tarefas.map<Widget>((tarefa){
+                                            return Padding(padding: const EdgeInsets.only(left: 16),
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  value: tarefa.isComplete,
+                                                   onChanged: (newValue){
+                                                    setState(() {
+                                                      tarefa.isComplete = newValue ?? false;
+                                                });
+                                              },),
+                                              Text(
+                                              tarefa.tituloTarefa,
+                                              style: TextStyle(
+                                                color: Colors.lightBlueAccent,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                              ],
+                                            )
+                                            );
+                                          }).toList(),
+                                        ),
+                                        trailing: SizedBox(
+                                          width: 100,
+                                          child: Row(children: [
+                                            IconButton(onPressed:() {},
+                                             icon: Icon(Icons.edit),
+                                             color: Colors.white,
+                                            ),
+                                            IconButton(onPressed: () async{
+                                              bool? deletedConfirmed = await ConfirmationDialog.show(
+                                                context,
+                                                'Confirmação',
+                                                'Tem certeza que deseja excluir este plano?',
+                                              );
+                                              if (deletedConfirmed == true){
+                                                await planoAcaoController.deletarPlano(plano.nome);
+                                                onPlanAdded();
+                                                planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
+                                              }
+                                            },
+                                            icon: Icon(Icons.delete),
+                                            color: Colors.white,
+                                            ),
+                                          ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              );
                             }).toList(),
                           ),
                         ),
                       ],
                     ),
                 ],
-              ),
+            ),
+
             );
-          }
+        }
         },
-      ),
+
+    ),
     );
   }
 }

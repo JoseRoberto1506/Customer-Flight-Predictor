@@ -1,8 +1,11 @@
+import 'package:cfp_app/models/plano_acao_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cfp_app/pages/cliente.dart';
 import 'package:cfp_app/models/cliente_model.dart';
+import 'package:cfp_app/models/tarefa_model.dart';
+import 'package:cfp_app/providers/clientes_provider.dart';
+import 'package:cfp_app/providers/plano_repository.dart';
 
 class AddPlanDialog extends StatefulWidget {
   const AddPlanDialog(
@@ -21,35 +24,36 @@ class AddPlanDialog extends StatefulWidget {
 
 class _AddPlanDialogState extends State<AddPlanDialog> {
   String planName = '';
-  List<String> tasks = [];
+  List<Tarefa> tasks = [];
   final User? user = FirebaseAuth.instance.currentUser;
   final Map<String, dynamic>? planos = {};
+  final ClientesProvider clienteController = ClientesProvider();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Cadastrar Plano'),
+      title: const Text('Cadastrar Plano'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-            decoration: InputDecoration(labelText: 'Nome do Plano'),
+            decoration: const InputDecoration(labelText: 'Nome do Plano'),
             onChanged: (value) {
               setState(() {
                 planName = value;
               });
             },
           ),
-          SizedBox(height: 16),
-          Text('Tarefas:'),
+          const SizedBox(height: 16),
+          const Text('Tarefas:'),
           Column(
-            children: tasks.map((task) => Text(task)).toList(),
+            children: tasks.map((task) => Text(task.tituloTarefa)).toList(),
           ),
           ElevatedButton(
             onPressed: () {
               _addTaskDialog(context, tasks);
             },
-            child: Text('Adicionar Tarefa'),
+            child: const Text('Adicionar Tarefa'),
           ),
         ],
       ),
@@ -58,32 +62,32 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancelar'),
+          child: const Text('Cancelar'),
         ),
         TextButton(
           onPressed: () async {
-            await _salvarPlano(widget.clienteId);
+            await _salvarPlano();
             Navigator.of(context).pop(); // Close the dialog after saving
           },
-          child: Text('Salvar'),
+          child: const Text('Salvar'),
         ),
       ],
     );
   }
 
-  void _addTaskDialog(BuildContext context, List<String> tasks) {
+  void _addTaskDialog(BuildContext context, List<Tarefa> tasks) {
     String newTask = '';
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Adicionar Tarefa'),
+          title: const  Text('Adicionar Tarefa'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Nova Tarefa'),
+                decoration: const InputDecoration(labelText: 'Nova Tarefa'),
                 onChanged: (value) {
                   newTask = value;
                 },
@@ -95,19 +99,19 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
             ),
             TextButton(
               onPressed: () {
                 if (newTask.isNotEmpty) {
                   setState(() {
-                    tasks.add(newTask);
+                    tasks.add(Tarefa(tituloTarefa: newTask));
                     print(tasks);
                   });
                   Navigator.of(context).pop();
                 }
               },
-              child: Text('Adicionar'),
+              child: const Text('Adicionar'),
             ),
           ],
         );
@@ -115,20 +119,29 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
     );
   }
 
-  _salvarPlano(String? clienteId) async {
+_salvarPlano() async {
+  try {
+    final User? user = FirebaseAuth.instance.currentUser;
     String? uid = user?.uid;
-    CollectionReference listaPlanosRef = FirebaseFirestore.instance
-        .collection('usuarios')
-        .doc(uid)
-        .collection('listaPlanos');
+    
+    if (uid != null) {
+      final PlanoAcao plano = PlanoAcao(
+        cliente: widget.cliente,
+        tarefas: tasks,
+        nome: planName,
+      );
 
-    Map<String, dynamic> plano = {
-      'clienteId': clienteId,
-      'nome': planName,
-      'tarefas': tasks,
-    };
+      CollectionReference listaPlanosRef = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .collection('listaPlanos');
 
-    await listaPlanosRef.add(plano);
-    widget.onPlanAdded();
+      await listaPlanosRef.add(plano.toJson());
+      widget.onPlanAdded();
+      Navigator.of(context).pop(); // Feche o diálogo após salvar
+    }
+  } catch (e) {
+    print('Erro ao salvar o plano: $e');
   }
+}
 }
