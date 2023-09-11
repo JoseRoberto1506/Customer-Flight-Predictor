@@ -1,3 +1,4 @@
+import 'package:cfp_app/pages/alterarPlano.dart';
 import 'package:cfp_app/providers/plano_repository.dart';
 
 import 'componentes/dialogConfirm.dart';
@@ -33,13 +34,13 @@ class _TelaClienteState extends State<TelaCliente> {
   void initState() {
     super.initState();
     dadosClienteFuture = clienteController.getDadosCliente(widget.clienteId);
-    planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
+    planosClienteFuture = planoAcaoController.getPlanosCliente(widget.clienteId);
 
   }
 
   void onPlanAdded() {
     setState(() {
-      planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
+      planosClienteFuture = planoAcaoController.getPlanosCliente(widget.clienteId);
     });
   }
 
@@ -164,7 +165,6 @@ class _TelaClienteState extends State<TelaCliente> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AddPlanDialog(
-                                        cliente: widget.cliente,
                                         clienteId: widget.clienteId,
                                         onPlanAdded: onPlanAdded,
                                       );
@@ -211,7 +211,9 @@ class _TelaClienteState extends State<TelaCliente> {
                                         ),
                                         subtitle: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: plano.tarefas.map<Widget>((tarefa){
+                                          children: plano.tarefas.asMap().entries.map<Widget>((entry){
+                                            final index = entry.key;
+                                            final tarefa = entry.value;
                                             return Padding(padding: const EdgeInsets.only(left: 16),
                                             child: Row(
                                               children: [
@@ -221,6 +223,7 @@ class _TelaClienteState extends State<TelaCliente> {
                                                     setState(() {
                                                       tarefa.isComplete = newValue ?? false;
                                                 });
+                                                planoAcaoController.atualizarStatusTarefa(plano, tarefa);
                                               },),
                                               Text(
                                               tarefa.tituloTarefa,
@@ -237,7 +240,11 @@ class _TelaClienteState extends State<TelaCliente> {
                                         trailing: SizedBox(
                                           width: 100,
                                           child: Row(children: [
-                                            IconButton(onPressed:() {},
+                                            IconButton(onPressed:() {
+                                              Navigator.push(context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TelaAlterarPlano (plano: plano, cliente: widget.cliente,),));
+                                            },
                                              icon: Icon(Icons.edit),
                                              color: Colors.white,
                                             ),
@@ -250,7 +257,7 @@ class _TelaClienteState extends State<TelaCliente> {
                                               if (deletedConfirmed == true){
                                                 await planoAcaoController.deletarPlano(plano.nome);
                                                 onPlanAdded();
-                                                planosClienteFuture = planoAcaoController.getPlanosCliente(widget.cliente);
+                                                planosClienteFuture = planoAcaoController.getPlanosCliente(widget.clienteId);
                                               }
                                             },
                                             icon: Icon(Icons.delete),

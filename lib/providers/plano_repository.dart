@@ -1,4 +1,5 @@
 import 'package:cfp_app/models/cliente_model.dart';
+import 'package:cfp_app/models/tarefa_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfp_app/models/plano_acao_model.dart';
@@ -6,7 +7,7 @@ import 'package:cfp_app/models/plano_acao_model.dart';
 class PlanoAcaoRepository {
   final List<PlanoAcao> _planos = [];
 
-  Future<List<PlanoAcao>> getPlanosCliente(Cliente cliente) async {
+  Future<List<PlanoAcao>> getPlanosCliente(String? clienteId) async {
     final User? user = FirebaseAuth.instance.currentUser;
     final String? uid = user?.uid;
 
@@ -17,7 +18,7 @@ class PlanoAcaoRepository {
           .collection('listaPlanos');
 
       QuerySnapshot planosSnapshot = await listaPlanosRef
-          .where('cliente.idCliente', isEqualTo: cliente.idCliente)
+          .where('clienteId', isEqualTo: clienteId)
           .get();
 
       _planos.clear();
@@ -87,6 +88,35 @@ Future<void> deletarPlano(String nomeDoPlano) async {
     print('Plano não encontrado');
   }
 }
+
+Future<void> atualizarStatusTarefa(PlanoAcao plano, Tarefa tarefa) async {
+  String? idDoPlano = await getPlanoId(plano.nome);
+  if (idDoPlano != null){
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      CollectionReference listaPlanosRef = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .collection('listaPlanos');
+
+      DocumentReference planoRef = listaPlanosRef.doc(idDoPlano); 
+
+      // Encontre a tarefa no plano de ação
+      final tarefaIndex = plano.tarefas.indexOf(tarefa);
+
+      if (tarefaIndex >= 0) {
+        plano.tarefas[tarefaIndex] = tarefa; // Atualize a tarefa no plano
+        await planoRef.update({
+          'tarefas': plano.tarefas.map((t) => t.toJson()).toList(),
+        });
+      }
+    }
+  }
+  
+}
+
 
 
 }

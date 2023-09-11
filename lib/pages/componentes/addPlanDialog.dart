@@ -10,11 +10,9 @@ import 'package:cfp_app/providers/plano_repository.dart';
 class AddPlanDialog extends StatefulWidget {
   const AddPlanDialog(
       {Key? key,
-      required this.cliente,
       required this.clienteId,
       required this.onPlanAdded})
       : super(key: key);
-  final Cliente cliente;
   final String? clienteId;
   final VoidCallback onPlanAdded;
 
@@ -126,7 +124,7 @@ _salvarPlano() async {
     
     if (uid != null) {
       final PlanoAcao plano = PlanoAcao(
-        cliente: widget.cliente,
+        clienteId: widget.clienteId,
         tarefas: tasks,
         nome: planName,
       );
@@ -137,8 +135,7 @@ _salvarPlano() async {
           .collection('listaPlanos');
 
       await listaPlanosRef.add(plano.toJson());
-      widget.onPlanAdded();
-      Navigator.of(context).pop(); // Feche o diálogo após salvar
+      widget.onPlanAdded(); // Feche o diálogo após salvar
     }
   } catch (e) {
     print('Erro ao salvar o plano: $e');

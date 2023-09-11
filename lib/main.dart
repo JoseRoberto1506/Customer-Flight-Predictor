@@ -47,7 +47,7 @@ class MainApp extends StatelessWidget {
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
         '/nome' : (context) => const TelaAlterarNomeUsuario(),
-        '/alterarPlano': (context) => TelaAlterarPlano(),
+        
       },
     );
   }

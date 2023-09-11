@@ -1,70 +1,99 @@
+import 'dart:async';
+
+import 'package:cfp_app/models/cliente_model.dart';
+import 'package:cfp_app/models/plano_acao_model.dart';
+import 'package:cfp_app/models/tarefa_model.dart';
 import 'package:cfp_app/pages/componentes/caixabonita.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'componentes/botao.dart';
 import 'componentes/campoForm.dart';
+import 'package:cfp_app/providers/plano_repository.dart';
 
 class TelaAlterarPlano extends StatefulWidget {
+  final PlanoAcao plano;
+  final Cliente cliente;
+
+  TelaAlterarPlano({
+    required this.plano,
+    required this.cliente,
+  });
+
   @override
   _TelaAlterarPlanoState createState() => _TelaAlterarPlanoState();
 }
 
 class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
-  late Map<String, dynamic> planData;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _planNameController = TextEditingController();
-  List<String> updatedTasks = [];
+  List<Tarefa> updatedTasks = [];
   Map<String, TextEditingController> _taskControllers = {};
+  final PlanoAcaoRepository planoAcaoController = PlanoAcaoRepository();
 
   @override
   void initState() {
     super.initState();
-    // Avoid accessing inherited widgets here
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    planData =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    _planNameController.text = planData['nome'] ?? '';
-    updatedTasks = List<String>.from(planData['tarefas']);
-    for (String task in planData['tarefas']) {
-      _taskControllers[task] = TextEditingController(text: task);
+    _planNameController.text = widget.plano.nome;
+    updatedTasks = List<Tarefa>.from(widget.plano.tarefas);
+    for (Tarefa task in widget.plano.tarefas) {
+      _taskControllers[task.tituloTarefa] =
+          TextEditingController(text: task.tituloTarefa);
     }
   }
 
-  List<String> _getUpdatedTasks() {
+  List<Tarefa> _getUpdatedTasks() {
     return updatedTasks;
-  }
-
-  void _updateTaskControllerValue(String task, String value) {
-    _taskControllers[task]!.text = value;
   }
 
   void _saveChanges() async {
     try {
       if (_formKey.currentState!.validate()) {
-        User? user = FirebaseAuth.instance.currentUser;
-        String? uid = user?.uid;
-        List<String> updatedTasks = [];
-        for (String task in _taskControllers.keys) {
-          updatedTasks.add(_taskControllers[task]!.text);
+        // Atualize as tarefas no Firebase
+        String? idDoPlano =
+            await planoAcaoController.getPlanoId(widget.plano.nome);
+        final User? user = FirebaseAuth.instance.currentUser;
+        final String? uid = user?.uid;
+
+        if (idDoPlano != null && uid != null) {
+          List<Map<String, dynamic>> updatedTarefas =
+              widget.plano.tarefas.map((tarefa) {
+            return {
+              'tituloTarefa': _taskControllers[tarefa.tituloTarefa]!.text,
+              'isComplete': tarefa.isComplete,
+            };
+          }).toList();
+
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(uid)
+              .collection('listaPlanos')
+              .doc(idDoPlano)
+              .update({
+            'tarefas': updatedTarefas,
+          });
+
+          // Atualize as tarefas na instância do plano de ação
+          widget.plano.tarefas.forEach((tarefa) {
+            tarefa.tituloTarefa = _taskControllers[tarefa.tituloTarefa]!.text;
+          });
+          // Agora você pode atualizar o nome do plano de ação
+          widget.plano.nome = _planNameController.text;
+          await FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(uid)
+              .collection('listaPlanos')
+              .doc(idDoPlano)
+              .update({'nome': widget.plano.nome});
+
+          setState(() {});
+          Navigator.pop(context);
+        } else {
+          print('erro: cliente não encontrado');
         }
-        await FirebaseFirestore.instance
-            .collection('usuarios')
-            .doc(uid)
-            .collection('listaPlanos')
-            .doc(planData['id'])
-            .update({
-          'tarefas': updatedTasks,
-        });
-        print(updatedTasks);
       }
     } catch (error) {
-      print('error$error');
+      print('error: $error');
     }
   }
 
@@ -89,12 +118,12 @@ class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
                     obscureText: false,
                     decoration: InputDecoration(
                       labelText: 'Nome do Plano',
-                      labelStyle: TextStyle(color: Colors.white, fontSize: 18),
+                      labelStyle: TextStyle(color: Colors.white, fontSize: 15),
                     ),
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a plan name.';
+                        return 'Por favor, insira um nome para o plano.';
                       }
                       return null;
                     },
@@ -102,26 +131,23 @@ class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
                 ),
               ),
 
-              // Other editing fields
-              // ...
-
               // Generate a list of TextFormField widgets for tasks
-              for (String task in planData['tarefas'])
+              for (Tarefa task in widget.plano.tarefas)
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CampoForm(
-                      controller: _taskControllers[task]!,
+                    child: _taskControllers[task.tituloTarefa] != null ? CampoForm(
+                      controller: _taskControllers[task.tituloTarefa]!,
                       obscureText: false,
-                      hintText: 'Task',
+                      hintText: 'Tarefa',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Por favor digite uma tarefa.';
+                          return 'Por favor, digite uma tarefa.';
                         }
                         return null;
                       },
                       icon: Icon(Icons.task_outlined),
-                    ),
+                    ): Text("Controller is null"),
                   ),
                 ),
               const SizedBox(
@@ -134,7 +160,6 @@ class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
                 child: Botao(
                   fn: _saveChanges,
                   texto: 'Salvar',
-
                 ),
               ),
             ],
