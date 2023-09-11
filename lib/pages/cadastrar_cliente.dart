@@ -10,7 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfp_app/models/cliente_model.dart';
 
 class TelaCadastrarCliente extends StatefulWidget {
-  const TelaCadastrarCliente({Key? key}) : super(key: key);
+  final Cliente? cliente;
+  final String? clienteId;
+  const TelaCadastrarCliente({Key? key, this.cliente, this.clienteId}) : super(key: key);
 
   @override
   State<TelaCadastrarCliente> createState() => _TelaCadastrarCliente();
@@ -34,11 +36,20 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
     _nascimentoCliente = TextEditingController();
     _sexoCliente = TextEditingController();
     _pChurnCliente = TextEditingController();
+        if (widget.cliente != null){
+      _nomeCliente.text = widget.cliente!.nomeCliente;
+      _cpfCliente.text = widget.cliente!.cpfCliente;
+      _nascimentoCliente.text = widget.cliente!.dataNascCliente;
+      _sexoCliente.text = widget.cliente!.sexoCliente;
+      _pChurnCliente.text = widget.cliente!.chanceChurn;
+
+    }
   }
 
   Future<void> cadastrarcliente() async {
     if (_formKey.currentState!.validate()) {
       final cliente = Cliente(
+          idCliente: widget.cliente?.idCliente ?? '',
           nomeCliente: _nomeCliente.text,
           cpfCliente: _cpfCliente.text,
           dataNascCliente: _nascimentoCliente.text,
@@ -50,19 +61,22 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
       DocumentReference userDocRef = db.collection('usuarios').doc(uid);
       CollectionReference listaClientesRef =
           userDocRef.collection('listaclientes');
-      QuerySnapshot existingClient = await listaClientesRef
-          .where('cpfCliente', isEqualTo: _cpfCliente.text)
-          .get();
+          if (widget.cliente == null){
+            DocumentReference novoCliente = await listaClientesRef.add(clienteJson);
+            String idNovoCliente = novoCliente.id;
+            clienteJson['idCliente'] = idNovoCliente;
+            await novoCliente.update({'idCliente': idNovoCliente});
+          } else{
+            
+              await listaClientesRef.doc(cliente.idCliente).update(clienteJson);
+              print('cliente existente atualizado ');
 
-      if (existingClient.docs.isNotEmpty) {
-        String clientId = existingClient.docs[0].id;
-        await listaClientesRef.doc(clientId).update(clienteJson);
-      } else {
-        DocumentReference novoCliente = await listaClientesRef.add(clienteJson);
-        String idNovoCliente = novoCliente.id;
-        clienteJson['idCliente'] = idNovoCliente;
-        await novoCliente.update({'idCliente': idNovoCliente});
-      }
+            
+          }
+
+
+
+
 
       bool? confirmado = await ConfirmationDialog.show(
         context,
@@ -83,6 +97,7 @@ class _TelaCadastrarCliente extends State<TelaCadastrarCliente> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: SingleChildScrollView(
             child: Form(

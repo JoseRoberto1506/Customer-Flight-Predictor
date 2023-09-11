@@ -84,7 +84,7 @@ class _ListaClientesState extends State<ListaClientes> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const TelaCadastrarCliente(),
+                                    TelaCadastrarCliente(cliente: cliente),
                               ),
                             );
                           },
