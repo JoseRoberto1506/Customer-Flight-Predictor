@@ -10,7 +10,8 @@ import './pages/menu.dart';
 import './pages/config.dart';
 import './pages/alterarSenha.dart';
 import './pages/alterarNome.dart';
-import './pages/alterarPlano.dart';
+import 'pages/lista_compromissos.dart';
+import 'pages/cadastrar_compromisso.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,11 +44,12 @@ class MainApp extends StatelessWidget {
         '/cadastrar_cliente': (context) => const TelaCadastrarCliente(),
         '/menu': (context) => const TelaMenu(),
         '/lista_clientes': (context) => const ListaClientes(),
-        '/configuracoes':(context)=> const TelaConfiguracoes(),
-        '/sobre':(context) => const TelaSobreAPP(),
+        '/lista_compromissos': (context) => const ListaCompromissos(),
+        '/cadastrar_compromisso': (context) => const TelaCadastrarCompromisso(),
+        '/configuracoes': (context) => const TelaConfiguracoes(),
+        '/sobre': (context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
-        '/nome' : (context) => const TelaAlterarNomeUsuario(),
-        
+        '/nome': (context) => const TelaAlterarNomeUsuario(),
       },
     );
   }
