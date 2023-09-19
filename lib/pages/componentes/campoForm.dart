@@ -8,6 +8,7 @@ class CampoForm extends StatelessWidget {
     required this.hintText,
     required this.validator,
     required this.icon,
+    this.longtext = false,
   });
 
   final TextEditingController? controller;
@@ -15,10 +16,13 @@ class CampoForm extends StatelessWidget {
   final String? hintText;
   final Icon icon;
   final String? Function(String?)? validator;
+  final bool longtext;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      minLines: longtext ? 10:1,
+      maxLines: longtext ? 70:1,
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
@@ -42,7 +46,7 @@ class CampoForm extends StatelessWidget {
         ),
         constraints: const BoxConstraints(
           maxWidth: 296,
-          maxHeight: 60,
+          maxHeight: 300,
         ),
       ),
       style: const TextStyle(

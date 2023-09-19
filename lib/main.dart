@@ -11,6 +11,8 @@ import './pages/config.dart';
 import './pages/alterarSenha.dart';
 import './pages/alterarNome.dart';
 import './pages/alterarPlano.dart';
+import './pages/lista_pedidos_servico.dart';
+import './pages/cadastrar_pedido.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +49,8 @@ class MainApp extends StatelessWidget {
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
         '/nome' : (context) => const TelaAlterarNomeUsuario(),
+        '/lista_pedidos_servico': (context) => const ListaPedidosServico(),
+        '/cadastrar_pedido': (context) => const TelaCadastrarPedido(),
         
       },
     );

@@ -4,10 +4,11 @@ import 'package:cfp_app/pages/componentes/dialogConfirm.dart';
 import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import './componentes/botao.dart';
-import './componentes/dropdown.dart';
+import 'componentes/dropdown_especial.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfp_app/models/cliente_model.dart';
+import 'componentes/dropdown.dart';
 
 class TelaCadastrarCliente extends StatefulWidget {
   final Cliente? cliente;

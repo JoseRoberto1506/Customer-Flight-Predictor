@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class Dropdown extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final List<String> dropOpcoes;
   final String hint;
   final Icon icon;
   Dropdown({
     super.key,
-    required this.controller,
+    this.controller,
     required this.dropOpcoes,
     required this.hint,
     required this.icon,
@@ -40,9 +40,9 @@ class Dropdown extends StatelessWidget {
                 ),
                 icon:
                     const Icon(Icons.expand_more_outlined, color: Colors.white),
-                value: controller.text.isEmpty ? null : controller.text,
+                value: controller?.text.isEmpty == true ? null : controller?.text,
                 onChanged: (escolha) {
-                  controller.text = escolha.toString();
+                  controller!.text = escolha.toString();
                 },
                 items: dropOpcoes
                     .map((op) => DropdownMenuItem(
