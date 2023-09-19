@@ -1,4 +1,6 @@
+import 'package:cfp_app/pages/equipamentos.dart';
 import 'package:cfp_app/pages/lista_clientes.dart';
+import 'package:cfp_app/pages/lista_equipamentos.dart';
 import 'package:cfp_app/pages/sobre_app.dart';
 import 'package:flutter/material.dart';
 import './pages/login.dart';
@@ -11,6 +13,7 @@ import './pages/config.dart';
 import './pages/alterarSenha.dart';
 import './pages/alterarNome.dart';
 import './pages/alterarPlano.dart';
+import 'pages/cadastrar_equipamentos.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +50,8 @@ class MainApp extends StatelessWidget {
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
         '/nome' : (context) => const TelaAlterarNomeUsuario(),
+        '/lista_equipamentos' : (context) => const ListaEquipamentos(),
+        '/cadastrar_equipamentos' : (context) => const CadastrarEquipamento(),
         
       },
     );
