@@ -21,9 +21,9 @@ class Equipamento {
   factory Equipamento.fromJson(Map<String, dynamic> json) {
     return Equipamento(
       idEquipamento: json['idEquipamento'],
-      nomeEquipamento: json['nome'],
-      descricaoEquipamento: json['descricao'],
-      precoEquipamento: json['preco'].toDouble(),
+      nomeEquipamento: json['nomeEquipamento'],
+      descricaoEquipamento: json['descricaoEquipamento'],
+      precoEquipamento: json['precoEquipamento'].toDouble(),
     );
   }
   String getNome() => nomeEquipamento;
