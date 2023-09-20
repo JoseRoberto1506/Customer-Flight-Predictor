@@ -16,11 +16,14 @@ class TelaCadastrarPromocao extends StatefulWidget {
 }
 
 class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
+  String tituloTela = "";
+  String tituloBotao = "";
   final db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _ClienteCpf;
   late final TextEditingController servico;
   late final TextEditingController _valor;
+  late final TextEditingController pagamento;
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -29,10 +32,17 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
     _ClienteCpf = TextEditingController();
     servico = TextEditingController();
     _valor = TextEditingController();
+    pagamento = TextEditingController();
         if (widget.promocao != null){
       _ClienteCpf.text = widget.promocao!.clienteCpf;
       servico.text = widget.promocao!.servico;
       _valor.text = widget.promocao!.valor;
+      pagamento.text = widget.promocao!.pagamento;
+      tituloTela = "Editar Promoção";
+      tituloBotao = "Editar";
+    }else{
+      tituloTela = "Cadastrar Promoção";
+      tituloBotao = "Cadastrar";
     }
   }
 
@@ -42,7 +52,8 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
           id: widget.promocao?.id ?? '',
           clienteCpf: _ClienteCpf.text,
           servico: servico.text,
-          valor: _valor.text);
+          valor: _valor.text,
+          pagamento: pagamento.text);
       final Map<String, dynamic> promocaoJson = promocao.toJson();
 
       String? uid = user?.uid;
@@ -78,8 +89,8 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
             const SizedBox(
               height: 52,
             ),
-            const Text(
-              'Cadastrar Promoção',
+            Text(
+              tituloTela,
               textAlign: TextAlign.center,
               maxLines: 1,
               style: TextStyle(
@@ -118,6 +129,15 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
             const SizedBox(
               height: 20,
             ),
+            Dropdown(
+              controller: pagamento,
+              dropOpcoes: ['Saque Bancário', 'Cartão de Crédito', 'Cheque'],
+              hint: 'Método de Pagamento',
+              icon: Icon(Icons.archive, color: Colors.white),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             CampoForm(
               controller: _valor,
               obscureText: false,
@@ -135,7 +155,7 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
             const SizedBox(
               height: 20,
             ),
-            Botao(fn: cadastrarpromocao, texto: "Cadastrar"),
+            Botao(fn: cadastrarpromocao, texto: tituloBotao),
             const SizedBox(
               height: 20,
             ),

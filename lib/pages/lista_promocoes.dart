@@ -63,7 +63,7 @@ class _ListaPromocoesState extends State<ListaPromocoes> {
                     filho: ListTile(
                   textColor: Colors.white,
                   title: Text('CPF do Cliente: ${promocao.getCPF()}'),
-                  subtitle: Text('Serviço: ${promocao.getServico()}\nValor: ${promocao.getValor()}%'),
+                  subtitle: Text('Serviço: ${promocao.getServico()}\nValor: ${promocao.getValor()}%\nMétodo de Pagamento: ${promocao.getPagamento()}'),
                   trailing: SizedBox(
                     width: 100,
                     child: Row(

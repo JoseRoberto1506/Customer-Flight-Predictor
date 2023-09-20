@@ -14,7 +14,7 @@ class CaixaBonita extends StatelessWidget {
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
                     width: 350,
-                    height: 112,
+                    height: 120,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 71, 70, 70),
