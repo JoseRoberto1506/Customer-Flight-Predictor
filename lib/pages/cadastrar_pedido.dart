@@ -30,7 +30,7 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
   late final TextEditingController _nomecliente;
   final User? user = FirebaseAuth.instance.currentUser;
   final ClientesProvider clienteController = ClientesProvider();
-  final ValueNotifier<String> _clienteSelecionado = ValueNotifier('');
+  final ValueNotifier<Cliente?> _clienteSelecionado = ValueNotifier<Cliente?>(null);
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
   Future<void> cadastrarpedido() async {
     if (_formKey.currentState!.validate()) {
       final _clienteid =
-          _clienteSelecionado.value; // Inicialize _clienteid aqui
+          _clienteSelecionado.value?.idCliente ?? ''; // Inicialize _clienteid aqui
 
       final pedido = Pedido(
           idPedido: widget.pedido?.idPedido ?? '',
@@ -111,9 +111,7 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                           _clienteSelecionado, // Use o ValueNotifier aqui
                       clienteSelecionado:
                           _clienteSelecionado, // Passe o ValueNotifier aqui
-                      dropOpcoes: listaDeClientes
-                          .map((cliente) => cliente.getNome())
-                          .toList(),
+                      dropOpcoes: listaDeClientes,
                       hint: 'Selecione um cliente',
                       icon: Icon(Icons.directions_run_outlined,
                           color: Colors.white),

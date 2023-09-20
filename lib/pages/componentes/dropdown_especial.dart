@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cfp_app/models/cliente_model.dart';
 
 class DropdownEspecial extends StatelessWidget {
-  final ValueNotifier<String> dropValue;
-  final ValueNotifier<String> clienteSelecionado;
-  final List<String> dropOpcoes;
+  final ValueNotifier<Cliente?> dropValue;
+  final ValueNotifier<Cliente?> clienteSelecionado;
+  final List<Cliente> dropOpcoes;
   final String hint;
   final Icon icon;
 
@@ -20,7 +21,7 @@ class DropdownEspecial extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 296,
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<Cliente?>(
         isExpanded: true,
         hint: Text(
           hint,
@@ -41,12 +42,13 @@ class DropdownEspecial extends StatelessWidget {
         icon: const Icon(Icons.expand_more_outlined, color: Colors.white),
         value: dropValue.value,
         onChanged: (escolha) {
-          dropValue.value = escolha!;
-          clienteSelecionado.value = escolha!; // Atualize o clienteSelecionado
+          if (escolha != null)
+          {dropValue.value = escolha;
+          clienteSelecionado.value = escolha;} // Atualize o clienteSelecionado
         },
         items: [
           DropdownMenuItem(
-            value: '', // Valor vazio
+            value: null, // Cliente nulo
             child: Text(
               '', // Texto vazio ou qualquer texto que você deseja exibir
               style: TextStyle(
@@ -56,10 +58,10 @@ class DropdownEspecial extends StatelessWidget {
           ),
           ...dropOpcoes
               .map(
-                (op) => DropdownMenuItem(
-                  value: op,
+                (cliente) => DropdownMenuItem(
+                  value: cliente,
                   child: Text(
-                    op,
+                    cliente.getNome(),
                     style: TextStyle(
                       color: Colors.white,
                     ),
