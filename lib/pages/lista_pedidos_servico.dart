@@ -7,6 +7,8 @@ import 'componentes/dialogConfirm.dart';
 import 'componentes/caixabonita.dart';
 import 'package:cfp_app/models/pedido_model.dart';
 import 'package:cfp_app/providers/pedidos_provider.dart';
+import 'package:cfp_app/providers/clientes_provider.dart';
+import 'package:cfp_app/models/cliente_model.dart';
 
 class ListaPedidosServico extends StatefulWidget {
   const ListaPedidosServico({Key? key}) : super(key: key);
@@ -17,18 +19,21 @@ class ListaPedidosServico extends StatefulWidget {
 
 class _ListaPedidosServicoState extends State<ListaPedidosServico> {
   final PedidosProvider pedidoController = PedidosProvider();
+  final ClientesProvider clienteController = ClientesProvider();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: pedidoController.fetchPedidos(),
+      future: Future.wait([pedidoController.fetchPedidos(),clienteController.fetchClients()]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // While data is being fetched
         } else if (snapshot.hasError) {
           return const Text('Error loading data'); // If there's an error
         } else {
-          List<Pedido> listaDePedidos = snapshot.data as List<Pedido>;
+          List<Pedido>? listaDePedidos = snapshot.data?[0] as List<Pedido>?;
+          List<Cliente>? listaDeClientes = snapshot.data?[1] as List<Cliente>?;
+
           return Scaffold(
             appBar: AppBar(
               leading: Builder(
@@ -44,7 +49,7 @@ class _ListaPedidosServicoState extends State<ListaPedidosServico> {
                   );
                 },
               ),
-              title: const Text('Lista de pedidos'),
+              title: const Text('Pedidos de serviço'),
               backgroundColor: const Color(0xFF313133),
               actions: <Widget>[
                 IconButton(
@@ -58,8 +63,11 @@ class _ListaPedidosServicoState extends State<ListaPedidosServico> {
             body: ListView.builder(
               itemCount: pedidoController.getQuantidadePedidos(),
               itemBuilder: (context, i) {
-                final pedido = listaDePedidos[i];
-                final String? pedidoId = pedido.idPedido;
+                final Pedido? pedido = listaDePedidos?[i];
+                final String? pedidoId = pedido?.idPedido;
+                final String? clienteId = pedido?.clienteId;
+                final Cliente? cliente = listaDeClientes?.firstWhere ((cliente) => cliente.idCliente == clienteId);
+                
 
                 return CaixaBonita(
                     filho: ListTile(
@@ -68,14 +76,15 @@ class _ListaPedidosServicoState extends State<ListaPedidosServico> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => TelaPedido(
-                                pedido: pedido,
+                                pedido: pedido!,
                                 pedidoId: pedidoId,
+                                clienteId: clienteId,
                               )),
                     );
                   },
                   textColor: Colors.white,
-                  title: Text('${pedido.getTitulo()}'), //interpolação de string
-                  subtitle: Text(pedido.getStatus()),
+                  title: Text('${pedido!.getTitulo()}'), //interpolação de string
+                  subtitle: Text(pedido!.getStatus()),
                   trailing: SizedBox(
                     width: 100,
                     child: Row(
@@ -86,7 +95,7 @@ class _ListaPedidosServicoState extends State<ListaPedidosServico> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    TelaCadastrarPedido(pedido: pedido),
+                                    TelaCadastrarPedido(pedido: pedido,cliente: cliente),
                               ),
                             );
                           },

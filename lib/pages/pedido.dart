@@ -17,11 +17,13 @@ import 'package:cfp_app/providers/clientes_provider.dart';
 class TelaPedido extends StatefulWidget {
   final Pedido pedido;
   final String? pedidoId;
+  final String? clienteId;
 
   const TelaPedido({
     Key? key,
     required this.pedido,
     required this.pedidoId,
+    required this.clienteId,
   }) : super(key: key);
 
   @override
@@ -33,20 +35,18 @@ class _TelaPedidoState extends State<TelaPedido> {
   late Future<List<PlanoAcao>> planosPedidoFuture;
   final PedidosProvider pedidoController = PedidosProvider();
   final PlanoAcaoRepository planoAcaoController = PlanoAcaoRepository();
+  late Future<Cliente> dadosClienteFuture;
+  final ClientesProvider clienteController = ClientesProvider();
   
+
   @override
   void initState() {
     super.initState();
     dadosPedidoFuture = pedidoController.getDadosPedido(widget.pedidoId);
-    //planosClienteFuture = planoAcaoController.getPlanosCliente(widget.pedidoId);
-
+    dadosClienteFuture = clienteController.getDadosCliente(widget.clienteId);
   }
 
-  // void onPlanAdded() {
-  //   setState(() {
-  //     planosClienteFuture = planoAcaoController.getPlanosCliente(widget.pedidoId);
-  //   });
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +68,8 @@ class _TelaPedidoState extends State<TelaPedido> {
         backgroundColor: Color(0xFF313133),
       ),
       body: FutureBuilder(
-        future: Future.wait([dadosPedidoFuture, ]),//planosClienteFuture
-        builder: (context, snapshot) {
+        future: Future.wait([dadosPedidoFuture, dadosClienteFuture]),//planosClienteFuture
+        builder: (context, snapshot,) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -78,14 +78,14 @@ class _TelaPedidoState extends State<TelaPedido> {
             return Center(child: Text('No data available'));
           } else {
             Pedido? novoPedido = snapshot.data?[0] as Pedido?;
-            //List<PlanoAcao> planosCliente = snapshot.data?[1] as List<PlanoAcao>;
+            Cliente? novoCliente = snapshot.data?[1] as Cliente?;
             
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(
-                    height: 52,
+                    height: 20,
                   ),
                   Text(
                     (novoPedido?.getTitulo() ?? 'Erro ao carregar'),
@@ -97,9 +97,6 @@ class _TelaPedidoState extends State<TelaPedido> {
                       fontWeight: FontWeight.bold,
                       fontStyle: FontStyle.italic,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 52,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -117,7 +114,7 @@ class _TelaPedidoState extends State<TelaPedido> {
                         child: Column(
                           children: [
                             Text(
-                              'Cliente: "${(novoPedido?.getDescricao() ?? '00000000000')}"\n \n',
+                              'CLIENTE: ${(novoCliente?.getNome() ?? '00000000000')}\n \n',
                               textAlign: TextAlign.center,
                               maxLines: 10,
                               style: TextStyle(
@@ -137,7 +134,7 @@ class _TelaPedidoState extends State<TelaPedido> {
                               ),
                             ),
                             Text(
-                              'Data: ${(novoPedido?.getData() ?? 'Erro ao carregar')}',
+                              'DATA: ${(novoPedido?.getData() != null ? formatarData(novoPedido!.getData()) : 'Erro ao carregar')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -147,7 +144,7 @@ class _TelaPedidoState extends State<TelaPedido> {
                               ),
                             ),
                             Text(
-                              'Hora: ${(novoPedido?.getHora() ?? 'Erro ao carregar')}',
+                              'HORA: ${(novoPedido?.getHora() != null ? formatarHora(novoPedido!.getHora()) : 'Erro ao carregar')}',
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               style: TextStyle(
@@ -166,9 +163,7 @@ class _TelaPedidoState extends State<TelaPedido> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(
-                              height: 30,
-                            ),
+                            
                           ],
                         ),
                       ),
@@ -184,4 +179,25 @@ class _TelaPedidoState extends State<TelaPedido> {
     ),
     );
   }
+}
+
+String formatarData (String data) {
+  if (data.length != 8) {
+    return 'Data inválida';
+  }
+  String dia = data.substring (0,2);
+  String mes = data.substring (2,4);
+  String ano = data.substring (4,8);
+
+  return '$dia/$mes/$ano';
+}
+
+String formatarHora (String hora) {
+  if (hora.length != 4) {
+    return 'Hora inválida';
+  }
+  String horas = hora.substring (0,2);
+  String minutos = hora.substring (2,4);
+
+  return '$horas:$minutos';
 }

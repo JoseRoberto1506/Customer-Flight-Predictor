@@ -15,7 +15,8 @@ import 'package:cfp_app/models/cliente_model.dart';
 class TelaCadastrarPedido extends StatefulWidget {
   final Pedido? pedido;
   final String? pedidoId;
-  const TelaCadastrarPedido({Key? key, this.pedido, this.pedidoId})
+  final Cliente? cliente;
+  const TelaCadastrarPedido({Key? key, this.pedido, this.pedidoId, this.cliente})
       : super(key: key);
 
   @override
@@ -32,7 +33,8 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
   late final TextEditingController _status;
   final User? user = FirebaseAuth.instance.currentUser;
   final ClientesProvider clienteController = ClientesProvider();
-  final ValueNotifier<Cliente?> _clienteSelecionado = ValueNotifier<Cliente?>(null);
+  late ValueNotifier<Cliente?> _clienteSelecionado = ValueNotifier<Cliente?>(null);
+  late String? _clienteid;
 
   @override
   void initState() {
@@ -42,12 +44,20 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
     _descricao = TextEditingController();
     _titulo = TextEditingController();
     _status = TextEditingController();
+    if (widget.pedido != null){
+      _data.text = widget.pedido!.data;
+      _hora.text = widget.pedido!.hora;
+      _descricao.text = widget.pedido!.descricao;
+      _titulo.text = widget.pedido!.titulo;
+      _status.text = widget.pedido!.status;
+      _clienteid = widget.cliente!.idCliente;
+    }
   }
 
   Future<void> cadastrarpedido() async {
     if (_formKey.currentState!.validate()) {
-      final _clienteid =
-          _clienteSelecionado.value?.idCliente ?? ''; // Inicialize _clienteid aqui
+      if (widget.cliente == null){_clienteid =
+          _clienteSelecionado.value?.idCliente ?? '';} // Inicialize _clienteid aqui
 
       final pedido = Pedido(
           idPedido: widget.pedido?.idPedido ?? '',
@@ -126,16 +136,16 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                     const SizedBox(
                       height: 52,
                     ),
-                    DropdownEspecial(
+                    Visibility(
+                      visible: widget.pedido == null,
+                      child: DropdownEspecial(
                       dropValue:
                           _clienteSelecionado, // Use o ValueNotifier aqui
-                      clienteSelecionado:
-                          _clienteSelecionado, // Passe o ValueNotifier aqui
                       dropOpcoes: listaDeClientes,
                       hint: 'Selecione um cliente',
                       icon: Icon(Icons.person,
                           color: Colors.white),
-                    ),
+                    ),),
                     const SizedBox(
                       height: 20,
                     ),
@@ -163,7 +173,7 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                         if (value == null || value.isEmpty) {
                           return 'Campo obrigatório';
                         } else if (!isNumeric(value) || value.length != 8) {
-                          return 'Data de pedido inválida';
+                          return 'Insira data no formato DDMMAAAA';
                         }
                         return null;
                       },
@@ -180,7 +190,7 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                         if (value == null || value.isEmpty) {
                           return 'Campo obrigatório';
                         } else if (!isNumeric(value) || value.length != 4) {
-                          return 'Hora de pedido inválida';
+                          return 'Insira hora no formato HHMM';
                         }
                         return null;
                       },

@@ -3,7 +3,6 @@ import 'package:cfp_app/models/cliente_model.dart';
 
 class DropdownEspecial extends StatelessWidget {
   final ValueNotifier<Cliente?> dropValue;
-  final ValueNotifier<Cliente?> clienteSelecionado;
   final List<Cliente> dropOpcoes;
   final String hint;
   final Icon icon;
@@ -11,7 +10,6 @@ class DropdownEspecial extends StatelessWidget {
   DropdownEspecial({
     Key? key,
     required this.dropValue,
-    required this.clienteSelecionado,
     required this.dropOpcoes,
     required this.hint,
     required this.icon,
@@ -43,22 +41,19 @@ class DropdownEspecial extends StatelessWidget {
         value: dropValue.value,
         onChanged: (escolha) {
           if (escolha != null)
-          {dropValue.value = escolha;
-          clienteSelecionado.value = escolha;} // Atualize o clienteSelecionado
+          {dropValue.value = escolha;} // Atualize o clienteSelecionado
         },
-        items:dropOpcoes
-              .map(
-                (cliente) => DropdownMenuItem(
-                  value: cliente,
-                  child: Text(
-                    cliente.getNome(),
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
+        items:dropOpcoes.map((cliente) {
+          return DropdownMenuItem<Cliente?>(
+            value: cliente,
+            child: Text(
+              cliente.getNome(),
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          );
+        }).toList(),
         dropdownColor: const Color(0xFF242425),
       ),
     );
