@@ -12,7 +12,7 @@ class TelaEquipamentos extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes do Equipamento'),
-        backgroundColor: Color(0xFF313133),
+        backgroundColor: Color.fromARGB(255, 13, 13, 14),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -23,19 +23,20 @@ class TelaEquipamentos extends StatelessWidget {
               Text(
                 'Nome: ${equipamento.nomeEquipamento}',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10),
               Text(
                 'Descrição: ${equipamento.descricaoEquipamento}',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
                 'Preço: R\$ ${equipamento.precoEquipamento.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
               // Outros detalhes do equipamento, se necessário
