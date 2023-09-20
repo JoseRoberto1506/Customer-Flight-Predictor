@@ -4,6 +4,7 @@ import 'package:cfp_app/pages/componentes/dialogConfirm.dart';
 import 'package:flutter/material.dart';
 import './componentes/campoForm.dart';
 import './componentes/botao.dart';
+import 'componentes/dropdown.dart';
 import 'componentes/dropdown_especial.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +28,8 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
   late final TextEditingController _data;
   late final TextEditingController _hora;
   late final TextEditingController _descricao;
-  late final TextEditingController _nomecliente;
+  late final TextEditingController _titulo;
+  late final TextEditingController _status;
   final User? user = FirebaseAuth.instance.currentUser;
   final ClientesProvider clienteController = ClientesProvider();
   final ValueNotifier<Cliente?> _clienteSelecionado = ValueNotifier<Cliente?>(null);
@@ -38,7 +40,8 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
     _data = TextEditingController();
     _hora = TextEditingController();
     _descricao = TextEditingController();
-    _nomecliente = TextEditingController();
+    _titulo = TextEditingController();
+    _status = TextEditingController();
   }
 
   Future<void> cadastrarpedido() async {
@@ -51,7 +54,9 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
           data: _data.text,
           hora: _hora.text,
           descricao: _descricao.text,
-          clienteId: _clienteid);
+          clienteId: _clienteid,
+          titulo: _titulo.text,
+          status: _status.text);
       final Map<String, dynamic> pedidoJson = pedido.toJson();
 
       String? uid = user?.uid;
@@ -77,6 +82,8 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
         _data.clear();
         _hora.clear();
         _descricao.clear();
+        _titulo.clear();
+        _status.clear();
       } else {
         navegar(context, '/lista_pedidos_servico');
       }
@@ -106,22 +113,8 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                     const SizedBox(
                       height: 52,
                     ),
-                    DropdownEspecial(
-                      dropValue:
-                          _clienteSelecionado, // Use o ValueNotifier aqui
-                      clienteSelecionado:
-                          _clienteSelecionado, // Passe o ValueNotifier aqui
-                      dropOpcoes: listaDeClientes,
-                      hint: 'Selecione um cliente',
-                      icon: Icon(Icons.directions_run_outlined,
-                          color: Colors.white),
-                    ),
-
-                    const SizedBox(
-                      height: 20,
-                    ),
                     const Text(
-                      'Cadastrar pedido',
+                      'Cadastrar pedido de serviço',
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       style: TextStyle(
@@ -132,6 +125,33 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                     ),
                     const SizedBox(
                       height: 52,
+                    ),
+                    DropdownEspecial(
+                      dropValue:
+                          _clienteSelecionado, // Use o ValueNotifier aqui
+                      clienteSelecionado:
+                          _clienteSelecionado, // Passe o ValueNotifier aqui
+                      dropOpcoes: listaDeClientes,
+                      hint: 'Selecione um cliente',
+                      icon: Icon(Icons.person,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CampoForm(
+                        controller: _titulo,
+                        obscureText: false,
+                        hintText: 'Título do pedido',
+                        icon: const Icon(Icons.title, color: Colors.white),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          return null;
+                        }),
+                        const SizedBox(
+                      height: 20,
                     ),
                     CampoForm(
                       controller: _data,
@@ -184,15 +204,15 @@ class _TelaCadastrarPedido extends State<TelaCadastrarPedido> {
                       height: 20,
                     ),
 
-                    // Dropdown(
-                    //   controller: _pChurnPedido,
-                    //   dropOpcoes: ['Grande chance de sair', 'Pouca chance de sair'],
-                    //   hint: 'Probabilidade de Churn',
-                    //   icon: Icon(Icons.directions_run_outlined, color: Colors.white),
-                    // ),
-                    // const SizedBox(
-                    //   height: 20,
-                    // ),
+                    Dropdown(
+                      controller: _status,
+                      dropOpcoes: ['Pendente', 'Resolvido'],
+                      hint: 'Status do serviço',
+                      icon: Icon(Icons.check_circle_outlined, color: Colors.white),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Botao(fn: cadastrarpedido, texto: "Cadastrar"),
                     const SizedBox(
                       height: 20,

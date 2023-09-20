@@ -74,8 +74,8 @@ class _ListaPedidosServicoState extends State<ListaPedidosServico> {
                     );
                   },
                   textColor: Colors.white,
-                  title: Text(pedido.getData()),
-                  subtitle: Text(pedido.getHora()),
+                  title: Text('${pedido.getTitulo()}'), //interpolação de string
+                  subtitle: Text(pedido.getStatus()),
                   trailing: SizedBox(
                     width: 100,
                     child: Row(

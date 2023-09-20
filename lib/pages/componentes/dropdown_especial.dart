@@ -46,17 +46,7 @@ class DropdownEspecial extends StatelessWidget {
           {dropValue.value = escolha;
           clienteSelecionado.value = escolha;} // Atualize o clienteSelecionado
         },
-        items: [
-          DropdownMenuItem(
-            value: null, // Cliente nulo
-            child: Text(
-              '', // Texto vazio ou qualquer texto que você deseja exibir
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-          ...dropOpcoes
+        items:dropOpcoes
               .map(
                 (cliente) => DropdownMenuItem(
                   value: cliente,
@@ -69,7 +59,6 @@ class DropdownEspecial extends StatelessWidget {
                 ),
               )
               .toList(),
-        ],
         dropdownColor: const Color(0xFF242425),
       ),
     );

@@ -46,7 +46,7 @@ class CampoForm extends StatelessWidget {
         ),
         constraints: const BoxConstraints(
           maxWidth: 296,
-          maxHeight: 300,
+          maxHeight: 150,
         ),
       ),
       style: const TextStyle(

@@ -3,7 +3,9 @@ class Pedido {
   final String data;
   final String hora;
   final String descricao;
+  final String titulo;
   final String? clienteId;
+  final String status;
 
   Pedido({
     this.idPedido,
@@ -11,6 +13,8 @@ class Pedido {
     required this.hora,
     required this.descricao,
     required this.clienteId,
+    required this.titulo,
+    required this.status,
 
   });
 
@@ -20,6 +24,8 @@ class Pedido {
         'hora': hora,
         'descricao': descricao,
         'clienteId': clienteId,
+        'titulo': titulo,
+        'status': status,
       };
 
   factory Pedido.fromJson(Map<String, dynamic> json) => Pedido(
@@ -27,10 +33,15 @@ class Pedido {
         data: json['data'],
         hora: json['hora'],
         descricao: json['descricao'],
-        clienteId: json['clienteId']
+        clienteId: json['clienteId'],
+        titulo: json['titulo'],
+        status: json['status'],
       );
 
   String getData() => data; //atributos já atribuídos, não são os recebidos!
   String getHora() => hora;
   String getDescricao() => descricao;
+  String getTitulo() => titulo;
+  String getStatus () => status;
+  String? getIdcliente () => clienteId;
 }
