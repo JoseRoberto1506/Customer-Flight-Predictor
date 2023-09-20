@@ -1,4 +1,6 @@
+import 'package:cfp_app/pages/cadastrar_promocao.dart';
 import 'package:cfp_app/pages/lista_clientes.dart';
+import 'package:cfp_app/pages/lista_promocoes.dart';
 import 'package:cfp_app/pages/sobre_app.dart';
 import 'package:flutter/material.dart';
 import './pages/login.dart';
@@ -47,7 +49,8 @@ class MainApp extends StatelessWidget {
         '/sobre':(context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
         '/nome' : (context) => const TelaAlterarNomeUsuario(),
-        
+        '/lista_promocoes':(context) => ListaPromocoes(),
+        '/cadastrar_promocao':(context) => const TelaCadastrarPromocao()
       },
     );
   }
