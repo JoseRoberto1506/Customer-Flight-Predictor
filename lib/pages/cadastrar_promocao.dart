@@ -99,9 +99,9 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
               icon: const Icon(Icons.person, color: Colors.white),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'campo obrigatório';
+                  return 'Campo Obrigatório';
                 } else if (!isNumeric(value) || value.length != 11) {
-                  return 'cpf inválido';
+                  return 'CPF inválido';
                 }
                 return null;
               },
@@ -127,7 +127,7 @@ class _TelaCadastrarPromocao extends State<TelaCadastrarPromocao> {
                 if (value == null || value.isEmpty) {
                   return 'Campo obrigatório';
                 }else if (!isNumeric(value)) {
-                  return 'Valor inválido';
+                  return 'Valor inválido. Digite apenas valores numéricos';
                 }
                 return null;
               },
