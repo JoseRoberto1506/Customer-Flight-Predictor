@@ -1,3 +1,5 @@
+import 'package:cfp_app/pages/adicionar_feedback.dart';
+import 'package:cfp_app/pages/feedback_lista.dart';
 import 'package:cfp_app/pages/lista_clientes.dart';
 import 'package:cfp_app/pages/sobre_app.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,6 @@ import './pages/menu.dart';
 import './pages/config.dart';
 import './pages/alterarSenha.dart';
 import './pages/alterarNome.dart';
-import './pages/alterarPlano.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,13 +30,14 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Customer Flight Predictor",
       theme: ThemeData(
-          scaffoldBackgroundColor: const Color(0xFF242425),
-          buttonTheme: const ButtonThemeData(
-            buttonColor: Color(0xFF0EA5B0),
-          ),
-          snackBarTheme: const SnackBarThemeData(
-            backgroundColor: Colors.red,
-          )),
+        scaffoldBackgroundColor: const Color(0xFF242425),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Color(0xFF0EA5B0),
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: Colors.red,
+        ),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => const TelaLogin(),
@@ -43,11 +45,11 @@ class MainApp extends StatelessWidget {
         '/cadastrar_cliente': (context) => const TelaCadastrarCliente(),
         '/menu': (context) => const TelaMenu(),
         '/lista_clientes': (context) => const ListaClientes(),
-        '/configuracoes':(context)=> const TelaConfiguracoes(),
-        '/sobre':(context) => const TelaSobreAPP(),
+        '/configuracoes': (context) => const TelaConfiguracoes(),
+        '/sobre': (context) => const TelaSobreAPP(),
         '/senha': (context) => const TelaAlterarSenha(),
-        '/nome' : (context) => const TelaAlterarNomeUsuario(),
-        
+        '/nome': (context) => const TelaAlterarNomeUsuario(),
+        '/lista_feedbacks': (context) => const TelaListaFeedbacks(),
       },
     );
   }

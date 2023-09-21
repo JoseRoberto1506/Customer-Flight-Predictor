@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cfp_app/models/cliente_model.dart';
 import 'package:cfp_app/models/plano_acao_model.dart';
 import 'package:cfp_app/models/tarefa_model.dart';
@@ -15,16 +13,16 @@ class TelaAlterarPlano extends StatefulWidget {
   final PlanoAcao plano;
   final Cliente cliente;
 
-  TelaAlterarPlano({
+  const TelaAlterarPlano({
     required this.plano,
     required this.cliente,
   });
 
   @override
-  _TelaAlterarPlanoState createState() => _TelaAlterarPlanoState();
+  TelaAlterarPlanoState createState() => TelaAlterarPlanoState();
 }
 
-class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
+class TelaAlterarPlanoState extends State<TelaAlterarPlano> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _planNameController = TextEditingController();
   List<Tarefa> updatedTasks = [];
@@ -136,18 +134,20 @@ class _TelaAlterarPlanoState extends State<TelaAlterarPlano> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: _taskControllers[task.tituloTarefa] != null ? CampoForm(
-                      controller: _taskControllers[task.tituloTarefa]!,
-                      obscureText: false,
-                      hintText: 'Tarefa',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor, digite uma tarefa.';
-                        }
-                        return null;
-                      },
-                      icon: Icon(Icons.task_outlined),
-                    ): Text("Controller is null"),
+                    child: _taskControllers[task.tituloTarefa] != null
+                        ? CampoForm(
+                            controller: _taskControllers[task.tituloTarefa]!,
+                            obscureText: false,
+                            hintText: 'Tarefa',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Por favor, digite uma tarefa.';
+                              }
+                              return null;
+                            },
+                            icon: Icon(Icons.task_outlined),
+                          )
+                        : Text("Controller is null"),
                   ),
                 ),
               const SizedBox(

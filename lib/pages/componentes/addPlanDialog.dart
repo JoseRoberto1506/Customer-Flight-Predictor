@@ -2,25 +2,22 @@ import 'package:cfp_app/models/plano_acao_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cfp_app/models/cliente_model.dart';
+
 import 'package:cfp_app/models/tarefa_model.dart';
 import 'package:cfp_app/providers/clientes_provider.dart';
-import 'package:cfp_app/providers/plano_repository.dart';
 
 class AddPlanDialog extends StatefulWidget {
   const AddPlanDialog(
-      {Key? key,
-      required this.clienteId,
-      required this.onPlanAdded})
+      {Key? key, required this.clienteId, required this.onPlanAdded})
       : super(key: key);
   final String? clienteId;
   final VoidCallback onPlanAdded;
 
   @override
-  _AddPlanDialogState createState() => _AddPlanDialogState();
+  AddPlanDialogState createState() => AddPlanDialogState();
 }
 
-class _AddPlanDialogState extends State<AddPlanDialog> {
+class AddPlanDialogState extends State<AddPlanDialog> {
   String planName = '';
   List<Tarefa> tasks = [];
   final User? user = FirebaseAuth.instance.currentUser;
@@ -80,7 +77,7 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const  Text('Adicionar Tarefa'),
+          title: const Text('Adicionar Tarefa'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -104,7 +101,6 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
                 if (newTask.isNotEmpty) {
                   setState(() {
                     tasks.add(Tarefa(tituloTarefa: newTask));
-                    print(tasks);
                   });
                   Navigator.of(context).pop();
                 }
@@ -117,28 +113,28 @@ class _AddPlanDialogState extends State<AddPlanDialog> {
     );
   }
 
-_salvarPlano() async {
-  try {
-    final User? user = FirebaseAuth.instance.currentUser;
-    String? uid = user?.uid;
-    
-    if (uid != null) {
-      final PlanoAcao plano = PlanoAcao(
-        clienteId: widget.clienteId,
-        tarefas: tasks,
-        nome: planName,
-      );
+  _salvarPlano() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      String? uid = user?.uid;
 
-      CollectionReference listaPlanosRef = FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(uid)
-          .collection('listaPlanos');
+      if (uid != null) {
+        final PlanoAcao plano = PlanoAcao(
+          clienteId: widget.clienteId,
+          tarefas: tasks,
+          nome: planName,
+        );
 
-      await listaPlanosRef.add(plano.toJson());
-      widget.onPlanAdded(); // Feche o diálogo após salvar
+        CollectionReference listaPlanosRef = FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(uid)
+            .collection('listaPlanos');
+
+        await listaPlanosRef.add(plano.toJson());
+        widget.onPlanAdded(); // Feche o diálogo após salvar
+      }
+    } catch (e) {
+      print('Erro ao salvar o plano: $e');
     }
-  } catch (e) {
-    print('Erro ao salvar o plano: $e');
   }
-}
 }

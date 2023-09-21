@@ -68,4 +68,29 @@ class ClientesProvider {
       throw Exception('Usuário não autenticado');
     }
   }
+
+  Future<Cliente> getClienteByCpf(String cpf) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String? uid = user?.uid;
+
+    if (uid != null) {
+      DocumentReference dadosClienteRef = FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .collection('listaclientes')
+          .doc(cpf);
+
+      DocumentSnapshot dadosClienteSnapshot = await dadosClienteRef.get();
+      if (dadosClienteSnapshot.exists) {
+        Map<String, dynamic> data =
+            dadosClienteSnapshot.data() as Map<String, dynamic>;
+        Cliente cliente = Cliente.fromJson(data);
+        return cliente;
+      } else {
+        throw Exception('Cliente não encontrado');
+      }
+    } else {
+      throw Exception('Usuário não autenticado');
+    }
+  }
 }
